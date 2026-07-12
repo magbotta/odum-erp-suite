@@ -1,0 +1,33 @@
+entity: Tender
+app: government
+fields:
+  - {name: tender_number, type: string}
+  - {name: title, type: string, required: true}
+  - {name: description, type: text}
+  - {name: procurement_method, type: select, options: [Open, Restricted, Direct, Framework]}
+  - {name: gasb_fund, type: link, target: GASBFund}
+  - {name: estimated_value, type: currency}
+  - {name: currency, type: string}
+  - {name: publication_date, type: date}
+  - {name: submission_deadline, type: datetime}
+  - {name: award_date, type: date}
+  - {name: ocds_ocid, type: string}
+  - {name: awarded_vendor_id, type: string}
+  - {name: awarded_amount, type: currency}
+  - {name: status, type: select, options: [Draft, Published, Submissions Open, Under Evaluation, Awarded, Cancelled]}
+permissions:
+  - {role: Procurement Officer, read: true, write: true, submit: true}
+  - {role: Finance Officer, read: true, write: false}
+  - {role: Public, read: true, write: false}
+workflow:
+  states: [Draft, Published, Submissions Open, Under Evaluation, Awarded, Cancelled]
+  transitions:
+    - {from: Draft, to: Published, action: publish_tender}
+    - {from: Published, to: Submissions Open, action: open_submissions}
+    - {from: Submissions Open, to: Under Evaluation, action: close_submissions}
+    - {from: Under Evaluation, to: Awarded, action: award_tender}
+    - {from: Draft, to: Cancelled, action: cancel_tender}
+    - {from: Published, to: Cancelled, action: cancel_tender}
+hooks:
+  before_save: [set_tender_number]
+  after_submit: [publish_ocds_notice]

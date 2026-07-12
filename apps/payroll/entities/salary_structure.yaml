@@ -1,0 +1,14 @@
+entity: SalaryStructure
+app: payroll
+track_changes: true
+multi_company: true
+
+fields:
+  - {name: name, type: string, required: true, label: "Structure Name"}
+  - {name: description, type: text, label: "Description"}
+  - {name: is_active, type: boolean, default: true, label: "Is Active"}
+
+permissions:
+  - {role: HRManager, read: true, write: true}
+  - {role: Accountant, read: true, write: false}
+  - {role: Employee, read: false, write: false}

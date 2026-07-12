@@ -1,0 +1,18 @@
+entity: BlogPost
+app: website
+track_changes: true
+multi_company: false
+
+fields:
+  - {name: title, type: string, required: true, label: "Title"}
+  - {name: slug, type: string, required: true, label: "URL Slug"}
+  - {name: excerpt, type: text, label: "Excerpt"}
+  - {name: status, type: select, options: [Draft, Published, Archived], default: Draft}
+  - {name: meta_title, type: string, label: "Meta Title"}
+  - {name: meta_description, type: text, label: "Meta Description"}
+  - {name: published_at, type: datetime, label: "Published At"}
+
+permissions:
+  - {role: WebsiteEditor, read: true, write: true}
+  - {role: Admin, read: true, write: true}
+  - {role: Employee, read: true, write: false}

@@ -1,0 +1,27 @@
+entity: Appointment
+app: healthcare_his
+fields:
+  - {name: appointment_number, type: string}
+  - {name: patient, type: link, target: Patient, required: true}
+  - {name: appointment_type, type: select, options: [Consultation, Follow-Up, Procedure, Lab, Imaging, Emergency]}
+  - {name: scheduled_at, type: datetime, required: true}
+  - {name: duration_minutes, type: integer}
+  - {name: physician_employee_id, type: string}
+  - {name: ward, type: link, target: Ward}
+  - {name: reason, type: text}
+  - {name: status, type: select, options: [Scheduled, Confirmed, Checked In, In Progress, Completed, Cancelled, No Show]}
+  - {name: notes, type: text}
+permissions:
+  - {role: Clinical Staff, read: true, write: true, submit: true}
+  - {role: Receptionist, read: true, write: true}
+workflow:
+  states: [Scheduled, Confirmed, Checked In, In Progress, Completed, Cancelled, No Show]
+  transitions:
+    - {from: Scheduled, to: Confirmed, action: confirm_appointment}
+    - {from: Confirmed, to: Checked In, action: check_in_patient}
+    - {from: Checked In, to: In Progress, action: start_appointment}
+    - {from: In Progress, to: Completed, action: complete_appointment}
+    - {from: Scheduled, to: Cancelled, action: cancel_appointment}
+    - {from: Confirmed, to: No Show, action: mark_no_show}
+hooks:
+  before_save: [set_appointment_number]

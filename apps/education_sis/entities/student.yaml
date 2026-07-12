@@ -1,0 +1,32 @@
+entity: Student
+app: education_sis
+fields:
+  - {name: student_number, type: string, required: true}
+  - {name: first_name, type: string, required: true}
+  - {name: last_name, type: string, required: true}
+  - {name: date_of_birth, type: date}
+  - {name: gender, type: select, options: [Male, Female, Non-Binary, Prefer Not to Say]}
+  - {name: email, type: email}
+  - {name: phone, type: phone}
+  - {name: address, type: text}
+  - {name: program, type: link, target: Program}
+  - {name: academic_year, type: link, target: AcademicYear}
+  - {name: guardian_name, type: string}
+  - {name: guardian_phone, type: phone}
+  - {name: guardian_email, type: email}
+  - {name: has_iep, type: boolean}
+  - {name: admission_date, type: date}
+  - {name: status, type: select, options: [Applicant, Enrolled, Graduated, Withdrawn, Suspended]}
+permissions:
+  - {role: SIS Admin, read: true, write: true, submit: true}
+  - {role: Teacher, read: true, write: false}
+  - {role: Parent, read: false, write: false}
+workflow:
+  states: [Applicant, Enrolled, Graduated, Withdrawn, Suspended]
+  transitions:
+    - {from: Applicant, to: Enrolled, action: enroll_student}
+    - {from: Enrolled, to: Graduated, action: graduate_student}
+    - {from: Enrolled, to: Withdrawn, action: withdraw_student}
+    - {from: Enrolled, to: Suspended, action: suspend_student}
+hooks:
+  before_save: [set_student_number]

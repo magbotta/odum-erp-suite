@@ -1,0 +1,24 @@
+entity: Donation
+app: nonprofit
+fields:
+  - {name: donor, type: link, target: Donor, required: true}
+  - {name: fund, type: link, target: Fund}
+  - {name: campaign, type: link, target: FundraisingCampaign}
+  - {name: donation_date, type: date, required: true}
+  - {name: amount, type: currency, required: true}
+  - {name: currency, type: string}
+  - {name: payment_method, type: select, options: [Cash, Check, Card, Wire, Stock, In-Kind, Mobile Money]}
+  - {name: is_recurring, type: boolean}
+  - {name: receipt_number, type: string}
+  - {name: status, type: select, options: [Pledged, Received, Receipted, Failed]}
+  - {name: notes, type: text}
+permissions:
+  - {role: Development Officer, read: true, write: true, submit: true}
+workflow:
+  states: [Pledged, Received, Receipted, Failed]
+  transitions:
+    - {from: Pledged, to: Received, action: receive_donation}
+    - {from: Received, to: Receipted, action: issue_receipt}
+    - {from: Pledged, to: Failed, action: mark_failed}
+hooks:
+  after_submit: [post_donation_to_accounting, update_donor_totals]

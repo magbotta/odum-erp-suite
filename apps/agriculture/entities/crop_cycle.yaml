@@ -1,0 +1,26 @@
+entity: CropCycle
+app: agriculture
+fields:
+  - {name: plot, type: link, target: Plot, required: true}
+  - {name: crop, type: link, target: Crop, required: true}
+  - {name: season, type: string}
+  - {name: planting_date, type: date}
+  - {name: expected_harvest_date, type: date}
+  - {name: actual_harvest_date, type: date}
+  - {name: expected_yield_kg, type: float}
+  - {name: actual_yield_kg, type: float}
+  - {name: total_input_cost, type: currency}
+  - {name: status, type: select, options: [Planned, Planted, Growing, Harvested, Failed]}
+  - {name: notes, type: text}
+permissions:
+  - {role: Agronomist, read: true, write: true, submit: true}
+  - {role: Farm Manager, read: true, write: true}
+workflow:
+  states: [Planned, Planted, Growing, Harvested, Failed]
+  transitions:
+    - {from: Planned, to: Planted, action: record_planting}
+    - {from: Planted, to: Growing, action: update_growth}
+    - {from: Growing, to: Harvested, action: record_harvest}
+    - {from: Growing, to: Failed, action: mark_failed}
+hooks:
+  after_submit: [post_harvest_to_warehouse]

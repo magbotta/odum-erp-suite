@@ -30,6 +30,25 @@ INSTALLED_APPS = [
     "apps.accounting.apps.AccountingConfig",
     "apps.purchasing.apps.PurchasingConfig",
     "apps.sales.apps.SalesConfig",
+    # Phase 2 business apps
+    "apps.payroll.apps.PayrollConfig",
+    "apps.project.apps.ProjectConfig",
+    "apps.asset_management.apps.AssetManagementConfig",
+    "apps.website.apps.WebsiteConfig",
+    # Phase 3 industry apps
+    "apps.manufacturing.apps.ManufacturingConfig",
+    "apps.pos.apps.POSConfig",
+    # Phase 4 industry apps
+    "apps.education_sis.apps.EducationSISConfig",
+    "apps.healthcare_his.apps.HealthcareHISConfig",
+    "apps.agriculture.apps.AgricultureConfig",
+    "apps.nonprofit.apps.NonprofitConfig",
+    "apps.telecom.apps.TelecomConfig",
+    "apps.government.apps.GovernmentConfig",
+    "apps.microfinance.apps.MicrofinanceConfig",
+    "apps.legal_services.apps.LegalServicesConfig",
+    # core — document numbering
+    "core.numbering.apps.NumberingConfig",
     # metadata engine scans entity dirs from apps above
     "core.metadata_engine.apps.MetadataEngineConfig",
     "core.platform_api.apps.PlatformAPIConfig",

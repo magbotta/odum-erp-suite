@@ -1,0 +1,17 @@
+entity: Farm
+app: agriculture
+fields:
+  - {name: farm_code, type: string, required: true}
+  - {name: name, type: string, required: true}
+  - {name: owner_name, type: string}
+  - {name: crm_account_id, type: string}
+  - {name: total_area_ha, type: float}
+  - {name: region, type: string}
+  - {name: address, type: text}
+  - {name: boundary, type: geofence}
+  - {name: primary_crop, type: string}
+  - {name: irrigation_type, type: select, options: [Rain-fed, Drip, Sprinkler, Flood, None]}
+  - {name: is_active, type: boolean}
+permissions:
+  - {role: Agronomist, read: true, write: true}
+  - {role: Farm Manager, read: true, write: true}

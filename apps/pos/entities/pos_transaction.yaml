@@ -1,0 +1,33 @@
+entity: POSTransaction
+app: pos
+track_changes: true
+multi_company: true
+
+fields:
+  - {name: transaction_number, type: string, read_only: true, label: "Receipt #"}
+  - {name: session, type: link, target: POSSession, required: true, label: "POS Session"}
+  - {name: transaction_type, type: select, options: [sale, return, exchange], default: sale, label: "Type"}
+  - {name: status, type: select, options: [Draft, Completed, Voided, Synced], default: Draft}
+  - {name: net_total, type: currency, read_only: true, label: "Net Total"}
+  - {name: discount_amount, type: currency, label: "Discount"}
+  - {name: tax_total, type: currency, read_only: true, label: "Tax"}
+  - {name: grand_total, type: currency, read_only: true, label: "Grand Total"}
+  - {name: paid_amount, type: currency, label: "Paid"}
+  - {name: change_amount, type: currency, read_only: true, label: "Change"}
+  - {name: currency, type: string, default: "USD", label: "Currency"}
+  - {name: is_offline, type: boolean, default: false, label: "Captured Offline"}
+
+permissions:
+  - {role: Cashier, read: true, write: true}
+  - {role: StoreManager, read: true, write: true}
+  - {role: Accountant, read: true, write: false}
+
+workflow:
+  states: [Draft, Completed, Voided]
+  transitions:
+    - {from: Draft, to: Completed, action: pos.hooks.transaction.complete_transaction}
+    - {from: Draft, to: Voided}
+    - {from: Completed, to: Voided, action: pos.hooks.transaction.void_transaction}
+
+hooks:
+  before_save: [pos.hooks.transaction.set_transaction_number]

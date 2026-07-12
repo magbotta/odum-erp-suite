@@ -1,0 +1,32 @@
+entity: PayrollEntry
+app: payroll
+is_submittable: true
+track_changes: true
+multi_company: true
+
+fields:
+  - {name: payroll_number, type: string, read_only: true, label: "Payroll #"}
+  - {name: period, type: link, target: PayrollPeriod, required: true, label: "Payroll Period"}
+  - {name: status, type: select, options: [Draft, Processing, Completed, Submitted, Cancelled], default: Draft}
+  - {name: currency, type: string, default: "USD", label: "Currency"}
+  - {name: total_gross_pay, type: currency, read_only: true, label: "Total Gross Pay"}
+  - {name: total_deductions, type: currency, read_only: true, label: "Total Deductions"}
+  - {name: total_net_pay, type: currency, read_only: true, label: "Total Net Pay"}
+  - {name: notes, type: text, label: "Notes"}
+
+permissions:
+  - {role: HRManager, read: true, write: true, submit: true, cancel: true}
+  - {role: Accountant, read: true, write: false, submit: false}
+  - {role: Employee, read: false, write: false}
+
+workflow:
+  states: [Draft, Processing, Completed, Submitted, Cancelled]
+  transitions:
+    - {from: Draft, to: Processing, action: payroll.hooks.payroll_entry.compute_salary_slips}
+    - {from: Processing, to: Completed, action: payroll.hooks.payroll_entry.verify_slips}
+    - {from: Completed, to: Submitted, action: payroll.hooks.payroll_entry.post_to_gl}
+    - {from: Draft, to: Cancelled}
+    - {from: Processing, to: Cancelled}
+
+hooks:
+  before_save: [payroll.hooks.payroll_entry.set_payroll_number]

@@ -1,0 +1,39 @@
+entity: Asset
+app: asset_management
+is_submittable: true
+track_changes: true
+multi_company: true
+
+fields:
+  - {name: asset_name, type: string, required: true, label: "Asset Name"}
+  - {name: asset_code, type: string, required: true, label: "Asset Code"}
+  - {name: category, type: link, target: AssetCategory, required: true, label: "Category"}
+  - {name: status, type: select, options: [Draft, Active, Under Maintenance, Scrapped, Sold], default: Draft}
+  - {name: purchase_date, type: date, required: true, label: "Purchase Date"}
+  - {name: purchase_price, type: currency, required: true, label: "Purchase Price"}
+  - {name: current_value, type: currency, label: "Current Value"}
+  - {name: salvage_value, type: currency, default: 0, label: "Salvage Value"}
+  - {name: useful_life_years, type: integer, required: true, label: "Useful Life (Years)"}
+  - {name: depreciation_method, type: select, options: [straight_line, declining_balance, units_of_production], label: "Depreciation Method"}
+  - {name: depreciation_start_date, type: date, label: "Depreciation Start Date"}
+  - {name: location, type: string, label: "Location"}
+  - {name: barcode, type: string, label: "Barcode / Tag"}
+  - {name: serial_no, type: string, label: "Serial Number"}
+  - {name: description, type: text, label: "Description"}
+
+permissions:
+  - {role: AssetManager, read: true, write: true, submit: true, cancel: true}
+  - {role: Accountant, read: true, write: false}
+  - {role: Employee, read: true, write: false}
+
+workflow:
+  states: [Draft, Active, Under Maintenance, Scrapped, Sold]
+  transitions:
+    - {from: Draft, to: Active, action: asset_management.hooks.asset.generate_depreciation_schedule}
+    - {from: Active, to: Under Maintenance}
+    - {from: Under Maintenance, to: Active}
+    - {from: Active, to: Scrapped}
+    - {from: Active, to: Sold}
+
+hooks:
+  after_submit: [asset_management.hooks.asset.generate_depreciation_schedule]

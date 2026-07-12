@@ -1,0 +1,17 @@
+entity: WebPage
+app: website
+track_changes: true
+multi_company: false
+
+fields:
+  - {name: title, type: string, required: true, label: "Page Title"}
+  - {name: slug, type: string, required: true, label: "URL Slug"}
+  - {name: status, type: select, options: [Draft, Published, Archived], default: Draft}
+  - {name: meta_title, type: string, label: "Meta Title"}
+  - {name: meta_description, type: text, label: "Meta Description"}
+  - {name: template, type: string, default: "default", label: "Template"}
+  - {name: published_at, type: datetime, label: "Published At"}
+
+permissions:
+  - {role: WebsiteEditor, read: true, write: true}
+  - {role: Admin, read: true, write: true}

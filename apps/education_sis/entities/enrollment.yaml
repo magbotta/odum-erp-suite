@@ -1,0 +1,19 @@
+entity: Enrollment
+app: education_sis
+fields:
+  - {name: student, type: link, target: Student, required: true}
+  - {name: course_section, type: link, target: CourseSection, required: true}
+  - {name: academic_year, type: link, target: AcademicYear, required: true}
+  - {name: enrollment_date, type: date}
+  - {name: status, type: select, options: [Active, Dropped, Completed, Transferred]}
+  - {name: final_grade, type: string}
+  - {name: grade_points, type: float}
+  - {name: attendance_pct, type: float}
+permissions:
+  - {role: SIS Admin, read: true, write: true, submit: true}
+  - {role: Teacher, read: true, write: true}
+workflow:
+  states: [Active, Dropped, Completed, Transferred]
+  transitions:
+    - {from: Active, to: Dropped, action: drop_course}
+    - {from: Active, to: Completed, action: complete_course}

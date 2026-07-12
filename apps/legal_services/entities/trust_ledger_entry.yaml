@@ -1,0 +1,18 @@
+entity: TrustLedgerEntry
+app: legal_services
+fields:
+  - {name: trust_account, type: link, target: TrustAccount, required: true}
+  - {name: matter, type: link, target: Matter, required: true}
+  - {name: entry_type, type: select, options: [Deposit, Disbursement, Transfer to Operating, Adjustment], required: true}
+  - {name: amount, type: currency, required: true}
+  - {name: currency, type: string}
+  - {name: balance_after, type: currency}
+  - {name: entry_date, type: date, required: true}
+  - {name: description, type: string}
+permissions:
+  - {role: Attorney, read: true, write: true, submit: true}
+  - {role: Legal Admin, read: true, write: true, submit: true}
+  - {role: Billing, read: true, write: false}
+hooks:
+  before_save: [validate_trust_balance]
+  after_save: [update_trust_account_balance, post_trust_entry_to_gl]

@@ -1,0 +1,21 @@
+entity: Project
+app: project
+track_changes: true
+multi_company: true
+
+fields:
+  - {name: project_name, type: string, required: true, label: "Project Name"}
+  - {name: project_code, type: string, label: "Project Code"}
+  - {name: status, type: select, options: [Planning, Active, On Hold, Completed, Cancelled], default: Planning}
+  - {name: description, type: text, label: "Description"}
+  - {name: start_date, type: date, label: "Start Date"}
+  - {name: expected_end_date, type: date, label: "Expected End Date"}
+  - {name: is_billable, type: boolean, default: false, label: "Is Billable"}
+  - {name: budget, type: currency, label: "Budget"}
+  - {name: actual_cost, type: currency, read_only: true, label: "Actual Cost"}
+  - {name: currency, type: string, default: "USD", label: "Currency"}
+
+permissions:
+  - {role: ProjectManager, read: true, write: true}
+  - {role: Employee, read: true, write: false}
+  - {role: Accountant, read: true, write: false}

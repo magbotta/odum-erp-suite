@@ -1,0 +1,23 @@
+entity: Subscriber
+app: telecom
+fields:
+  - {name: subscriber_number, type: string, required: true}
+  - {name: first_name, type: string, required: true}
+  - {name: last_name, type: string, required: true}
+  - {name: business_name, type: string}
+  - {name: email, type: email}
+  - {name: phone, type: phone}
+  - {name: address, type: text}
+  - {name: kyc_verified, type: boolean}
+  - {name: crm_account_id, type: string}
+  - {name: registration_date, type: date}
+  - {name: status, type: select, options: [Active, Suspended, Terminated]}
+permissions:
+  - {role: Telecom Admin, read: true, write: true}
+  - {role: Subscriber Support, read: true, write: true}
+workflow:
+  states: [Active, Suspended, Terminated]
+  transitions:
+    - {from: Active, to: Suspended, action: suspend_subscriber}
+    - {from: Suspended, to: Active, action: reactivate_subscriber}
+    - {from: Suspended, to: Terminated, action: terminate_subscriber}

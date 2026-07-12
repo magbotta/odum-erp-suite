@@ -1,0 +1,32 @@
+entity: LoanAccount
+app: microfinance
+fields:
+  - {name: loan_number, type: string, required: true}
+  - {name: borrower, type: link, target: Borrower, required: true}
+  - {name: product, type: link, target: LoanProduct, required: true}
+  - {name: lending_group, type: link, target: LendingGroup}
+  - {name: principal_amount, type: currency, required: true}
+  - {name: outstanding_principal, type: currency}
+  - {name: accrued_interest, type: currency}
+  - {name: total_repaid, type: currency}
+  - {name: currency, type: string}
+  - {name: term_periods, type: integer, required: true}
+  - {name: disbursement_date, type: date}
+  - {name: maturity_date, type: date}
+  - {name: loan_officer_employee_id, type: string}
+  - {name: status, type: select, options: [Pending Approval, Approved, Active, Delinquent, Written Off, Closed]}
+permissions:
+  - {role: Loan Officer, read: true, write: true, submit: true}
+  - {role: Credit Manager, read: true, write: true, submit: true}
+  - {role: MFI Admin, read: true, write: true, submit: true}
+workflow:
+  states: [Pending Approval, Approved, Active, Delinquent, Written Off, Closed]
+  transitions:
+    - {from: Pending Approval, to: Approved, action: approve_loan}
+    - {from: Approved, to: Active, action: disburse_loan}
+    - {from: Active, to: Delinquent, action: mark_delinquent}
+    - {from: Delinquent, to: Active, action: cure_delinquency}
+    - {from: Active, to: Closed, action: close_loan}
+    - {from: Delinquent, to: Written Off, action: write_off_loan}
+hooks:
+  after_submit: [generate_repayment_schedule, post_disbursement_to_gl]

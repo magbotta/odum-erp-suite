@@ -1,0 +1,28 @@
+entity: Patient
+app: healthcare_his
+fields:
+  - {name: patient_number, type: string, required: true}
+  - {name: first_name, type: string, required: true}
+  - {name: last_name, type: string, required: true}
+  - {name: date_of_birth, type: date}
+  - {name: gender, type: select, options: [Male, Female, Other, Unknown]}
+  - {name: blood_type, type: select, options: [A+, A-, B+, B-, AB+, AB-, O+, O-, Unknown]}
+  - {name: phone, type: phone}
+  - {name: email, type: email}
+  - {name: address, type: text}
+  - {name: emergency_contact_name, type: string}
+  - {name: emergency_contact_phone, type: phone}
+  - {name: primary_physician_employee_id, type: string}
+  - {name: insurance_provider, type: string}
+  - {name: insurance_policy_number, type: string}
+  - {name: allergies, type: text}
+  - {name: status, type: select, options: [Active, Inactive, Deceased]}
+permissions:
+  - {role: Clinical Staff, read: true, write: true}
+  - {role: Billing, read: true, write: false}
+workflow:
+  states: [Active, Inactive, Deceased]
+  transitions:
+    - {from: Active, to: Inactive, action: deactivate_patient}
+hooks:
+  before_save: [set_patient_number]

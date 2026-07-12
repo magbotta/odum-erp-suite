@@ -1,0 +1,18 @@
+entity: Donor
+app: nonprofit
+fields:
+  - {name: donor_number, type: string}
+  - {name: crm_contact_id, type: string, required: true}
+  - {name: donor_type, type: select, options: [Individual, Corporate, Foundation, Government]}
+  - {name: major_donor, type: boolean}
+  - {name: solicitor_employee_id, type: string}
+  - {name: first_gift_date, type: date}
+  - {name: last_gift_date, type: date}
+  - {name: total_giving, type: currency}
+  - {name: moves_stage, type: select, options: [Identification, Qualification, Cultivation, Solicitation, Stewardship]}
+  - {name: notes, type: text}
+permissions:
+  - {role: Development Officer, read: true, write: true}
+  - {role: Executive Director, read: true, write: true}
+hooks:
+  before_save: [set_donor_number]

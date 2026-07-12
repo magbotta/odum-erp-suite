@@ -1,0 +1,34 @@
+entity: BillOfMaterials
+app: manufacturing
+is_submittable: true
+track_changes: true
+multi_company: true
+
+fields:
+  - {name: bom_number, type: string, read_only: true, label: "BOM #"}
+  - {name: item, type: link, target: Item, required: true, label: "Finished Item"}
+  - {name: quantity, type: float, required: true, default: 1, label: "Quantity"}
+  - {name: uom, type: string, default: "Nos", label: "UOM"}
+  - {name: bom_type, type: select, options: [manufacture, subcontract, phantom], default: manufacture, label: "BOM Type"}
+  - {name: is_active, type: boolean, default: true, label: "Active"}
+  - {name: is_default, type: boolean, default: false, label: "Default BOM"}
+  - {name: raw_material_cost, type: currency, read_only: true, label: "Raw Material Cost"}
+  - {name: operating_cost, type: currency, read_only: true, label: "Operating Cost"}
+  - {name: total_cost, type: currency, read_only: true, label: "Total Cost"}
+  - {name: remarks, type: text, label: "Remarks"}
+
+permissions:
+  - {role: ProductionManager, read: true, write: true, submit: true, cancel: true}
+  - {role: Accountant, read: true, write: false}
+  - {role: Employee, read: true, write: false}
+
+workflow:
+  states: [Draft, Active, Inactive]
+  transitions:
+    - {from: Draft, to: Active, action: manufacturing.hooks.bom.activate_bom}
+    - {from: Active, to: Inactive}
+    - {from: Inactive, to: Active}
+
+hooks:
+  before_save: [manufacturing.hooks.bom.set_bom_number]
+  after_save: [manufacturing.hooks.bom.compute_bom_cost]

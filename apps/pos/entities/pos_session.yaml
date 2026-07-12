@@ -1,0 +1,31 @@
+entity: POSSession
+app: pos
+track_changes: true
+multi_company: true
+
+fields:
+  - {name: session_number, type: string, read_only: true, label: "Session #"}
+  - {name: terminal, type: link, target: POSTerminal, required: true, label: "Terminal"}
+  - {name: status, type: select, options: [Open, Closing, Closed], default: Open}
+  - {name: opening_cash, type: currency, label: "Opening Cash"}
+  - {name: closing_cash_expected, type: currency, read_only: true, label: "Expected Cash"}
+  - {name: closing_cash_actual, type: currency, label: "Actual Cash"}
+  - {name: cash_difference, type: currency, read_only: true, label: "Cash Difference"}
+  - {name: total_sales, type: currency, read_only: true, label: "Total Sales"}
+  - {name: total_returns, type: currency, read_only: true, label: "Total Returns"}
+  - {name: currency, type: string, default: "USD", label: "Currency"}
+  - {name: notes, type: text, label: "Notes"}
+
+permissions:
+  - {role: Cashier, read: true, write: true}
+  - {role: StoreManager, read: true, write: true}
+  - {role: Accountant, read: true, write: false}
+
+workflow:
+  states: [Open, Closing, Closed]
+  transitions:
+    - {from: Open, to: Closing, action: pos.hooks.session.begin_close}
+    - {from: Closing, to: Closed, action: pos.hooks.session.close_session}
+
+hooks:
+  before_save: [pos.hooks.session.set_session_number]

@@ -1,0 +1,29 @@
+entity: CitizenServiceRequest
+app: government
+fields:
+  - {name: request_number, type: string}
+  - {name: service_type, type: string, required: true}
+  - {name: description, type: text, required: true}
+  - {name: priority, type: select, options: [Low, Normal, High, Emergency]}
+  - {name: reporter_name, type: string}
+  - {name: reporter_email, type: email}
+  - {name: reporter_phone, type: phone}
+  - {name: location_address, type: text}
+  - {name: location, type: geopoint}
+  - {name: assigned_department, type: string}
+  - {name: assigned_to_employee_id, type: string}
+  - {name: resolution_notes, type: text}
+  - {name: status, type: select, options: [Open, Assigned, In Progress, Resolved, Closed]}
+permissions:
+  - {role: Citizen Services, read: true, write: true, submit: true}
+  - {role: Department Staff, read: true, write: true}
+  - {role: Public, read: false, write: true}
+workflow:
+  states: [Open, Assigned, In Progress, Resolved, Closed]
+  transitions:
+    - {from: Open, to: Assigned, action: assign_request}
+    - {from: Assigned, to: In Progress, action: start_work}
+    - {from: In Progress, to: Resolved, action: resolve_request}
+    - {from: Resolved, to: Closed, action: close_request}
+hooks:
+  before_save: [set_request_number]

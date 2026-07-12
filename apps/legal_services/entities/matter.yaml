@@ -1,0 +1,33 @@
+entity: Matter
+app: legal_services
+fields:
+  - {name: matter_number, type: string, required: true}
+  - {name: name, type: string, required: true}
+  - {name: matter_type, type: link, target: MatterType}
+  - {name: client_crm_id, type: string, required: true}
+  - {name: client_name, type: string, required: true}
+  - {name: responsible_attorney_employee_id, type: string}
+  - {name: originating_attorney_employee_id, type: string}
+  - {name: opened_date, type: date}
+  - {name: closed_date, type: date}
+  - {name: statute_of_limitations_date, type: date}
+  - {name: billing_method, type: select, options: [Hourly, Flat Fee, Contingency, Capped]}
+  - {name: billing_rate, type: currency}
+  - {name: budget, type: currency}
+  - {name: description, type: text}
+  - {name: status, type: select, options: [Intake, Open, On Hold, Closed, Archived]}
+permissions:
+  - {role: Attorney, read: true, write: true, submit: true}
+  - {role: Legal Admin, read: true, write: true}
+  - {role: Billing, read: true, write: false}
+workflow:
+  states: [Intake, Open, On Hold, Closed, Archived]
+  transitions:
+    - {from: Intake, to: Open, action: open_matter}
+    - {from: Open, to: On Hold, action: put_on_hold}
+    - {from: On Hold, to: Open, action: reopen_matter}
+    - {from: Open, to: Closed, action: close_matter}
+    - {from: Closed, to: Archived, action: archive_matter}
+hooks:
+  before_save: [set_matter_number]
+  before_submit: [run_conflict_check]

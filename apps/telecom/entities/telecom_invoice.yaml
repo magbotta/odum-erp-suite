@@ -1,0 +1,27 @@
+entity: TelecomInvoice
+app: telecom
+fields:
+  - {name: subscriber, type: link, target: Subscriber, required: true}
+  - {name: invoice_number, type: string}
+  - {name: billing_period_start, type: date, required: true}
+  - {name: billing_period_end, type: date, required: true}
+  - {name: recurring_charges, type: currency}
+  - {name: usage_charges, type: currency}
+  - {name: taxes, type: currency}
+  - {name: grand_total, type: currency}
+  - {name: currency, type: string}
+  - {name: due_date, type: date}
+  - {name: status, type: select, options: [Draft, Issued, Paid, Overdue, Cancelled]}
+permissions:
+  - {role: Telecom Admin, read: true, write: true, submit: true}
+  - {role: Billing, read: true, write: true}
+workflow:
+  states: [Draft, Issued, Paid, Overdue, Cancelled]
+  transitions:
+    - {from: Draft, to: Issued, action: issue_invoice}
+    - {from: Issued, to: Paid, action: mark_paid}
+    - {from: Issued, to: Overdue, action: mark_overdue}
+    - {from: Issued, to: Cancelled, action: cancel_invoice}
+hooks:
+  before_save: [compute_invoice_totals]
+  after_submit: [post_to_accounting]

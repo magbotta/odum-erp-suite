@@ -1,0 +1,25 @@
+entity: TellerTransaction
+app: microfinance
+fields:
+  - {name: transaction_number, type: string}
+  - {name: transaction_type, type: select, options: [Loan Disbursement, Loan Repayment, Savings Deposit, Savings Withdrawal, Fee Collection, Cash In, Cash Out]}
+  - {name: amount, type: currency, required: true}
+  - {name: currency, type: string}
+  - {name: loan_account, type: link, target: LoanAccount}
+  - {name: savings_account, type: link, target: SavingsAccount}
+  - {name: payment_method, type: select, options: [Cash, Mobile Money, Bank Transfer, Agent]}
+  - {name: mobile_reference, type: string}
+  - {name: teller_employee_id, type: string}
+  - {name: notes, type: text}
+  - {name: status, type: select, options: [Pending, Completed, Reversed]}
+permissions:
+  - {role: Teller, read: true, write: true, submit: true}
+  - {role: Branch Manager, read: true, write: true, submit: true}
+workflow:
+  states: [Pending, Completed, Reversed]
+  transitions:
+    - {from: Pending, to: Completed, action: complete_transaction}
+    - {from: Completed, to: Reversed, action: reverse_transaction}
+hooks:
+  before_save: [set_transaction_number]
+  after_submit: [post_teller_transaction_to_gl]

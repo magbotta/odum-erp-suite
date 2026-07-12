@@ -1,0 +1,37 @@
+entity: WorkOrder
+app: manufacturing
+is_submittable: true
+track_changes: true
+multi_company: true
+
+fields:
+  - {name: work_order_number, type: string, read_only: true, label: "Work Order #"}
+  - {name: item, type: link, target: Item, required: true, label: "Item to Produce"}
+  - {name: bom, type: link, target: BillOfMaterials, label: "Bill of Materials"}
+  - {name: qty, type: float, required: true, label: "Quantity to Produce"}
+  - {name: produced_qty, type: float, read_only: true, label: "Produced Qty"}
+  - {name: uom, type: string, default: "Nos", label: "UOM"}
+  - {name: status, type: select, options: [Draft, Released, In Progress, Completed, Cancelled], default: Draft}
+  - {name: planned_start_date, type: datetime, label: "Planned Start"}
+  - {name: planned_end_date, type: datetime, label: "Planned End"}
+  - {name: actual_start_date, type: datetime, read_only: true, label: "Actual Start"}
+  - {name: actual_end_date, type: datetime, read_only: true, label: "Actual End"}
+  - {name: material_cost, type: currency, read_only: true, label: "Material Cost"}
+  - {name: operating_cost, type: currency, read_only: true, label: "Operating Cost"}
+  - {name: total_cost, type: currency, read_only: true, label: "Total Cost"}
+
+permissions:
+  - {role: ProductionManager, read: true, write: true, submit: true, cancel: true}
+  - {role: Employee, read: true, write: false}
+
+workflow:
+  states: [Draft, Released, In Progress, Completed, Cancelled]
+  transitions:
+    - {from: Draft, to: Released, action: manufacturing.hooks.work_order.release_work_order}
+    - {from: Released, to: In Progress, action: manufacturing.hooks.work_order.start_production}
+    - {from: In Progress, to: Completed, action: manufacturing.hooks.work_order.complete_work_order}
+    - {from: Draft, to: Cancelled}
+    - {from: Released, to: Cancelled}
+
+hooks:
+  before_save: [manufacturing.hooks.work_order.set_work_order_number]
