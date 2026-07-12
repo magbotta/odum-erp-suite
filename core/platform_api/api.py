@@ -5,10 +5,10 @@ from ninja.errors import HttpError
 from .security import AuthBearer
 
 api = NinjaAPI(
-    title="Ochre ERP API",
+    title="Odum ERP Suite API",
     version="1",
     description=(
-        "Auto-generated REST API for all Ochre ERP entities. "
+        "Auto-generated REST API for all Odum ERP Suite entities. "
         "Every entity defined via the metadata engine is available here."
     ),
     auth=AuthBearer(),
@@ -52,6 +52,10 @@ api.add_router("/telecom", telecom_router)
 api.add_router("/government", government_router)
 api.add_router("/microfinance", microfinance_router)
 api.add_router("/legal", legal_services_router)
+
+
+from core.platform_api.meta import meta_router  # noqa: E402
+api.add_router("/meta", meta_router)
 
 
 # --- Global error handlers ---

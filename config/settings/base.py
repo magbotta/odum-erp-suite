@@ -165,10 +165,10 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 # --- Email ---
-DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="noreply@ochre.local")
+DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="noreply@odum.local")
 
 # --- Default primary key ---
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# --- Ochre-specific ---
+# --- Odum ERP Suite-specific ---
 OCHRE_ENTITY_SCAN_DIRS: list[str] = []  # populated by each App's AppConfig

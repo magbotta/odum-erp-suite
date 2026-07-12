@@ -3,7 +3,7 @@ version: "3.9"
 # Production-grade Docker Compose stack.
 # For local dev, see docker-compose.dev.yml.
 
-x-ochre-env: &ochre-env
+x-odum-env: &odum-env
   env_file:
     - .env
   environment:
@@ -37,13 +37,13 @@ services:
       retries: 5
 
   app:
-    image: ochre-erp:latest
+    image: odum-erp-suite:latest
     build:
       context: ../..
       dockerfile: Dockerfile
       target: production
     restart: unless-stopped
-    <<: *ochre-env
+    <<: *odum-env
     depends_on:
       db:
         condition: service_healthy
@@ -63,9 +63,9 @@ services:
                --access-logfile -"
 
   worker:
-    image: ochre-erp:latest
+    image: odum-erp-suite:latest
     restart: unless-stopped
-    <<: *ochre-env
+    <<: *odum-env
     depends_on:
       db:
         condition: service_healthy
@@ -74,9 +74,9 @@ services:
     command: celery -A config worker -l info -c 4 -Q default,high,low
 
   beat:
-    image: ochre-erp:latest
+    image: odum-erp-suite:latest
     restart: unless-stopped
-    <<: *ochre-env
+    <<: *odum-env
     depends_on:
       db:
         condition: service_healthy

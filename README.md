@@ -1,4 +1,4 @@
-# Ochre ERP
+# Odum ERP Suite
 
 An open-source, fully self-hosted ERP platform designed to compete with Odoo, ERPNext, and Salesforce — with no license traps, no phone-home, and no paid tier.
 
@@ -28,11 +28,11 @@ An open-source, fully self-hosted ERP platform designed to compete with Odoo, ER
 
 ## Overview
 
-Ochre ERP is a **modular monolith**: one deployable application, one database cluster, but internally organised into strictly bounded apps with no cross-app direct SQL joins. All cross-app interaction goes through internal service calls or the domain event bus.
+Odum ERP Suite is a **modular monolith**: one deployable application, one database cluster, but internally organised into strictly bounded apps with no cross-app direct SQL joins. All cross-app interaction goes through internal service calls or the domain event bus.
 
 Key differentiators:
 
-| | Odoo | ERPNext | Salesforce | **Ochre ERP** |
+| | Odoo | ERPNext | Salesforce | **Odum ERP Suite** |
 |---|---|---|---|---|
 | License | LGPL core / proprietary Enterprise | GPLv3 | Proprietary SaaS | **Apache-2.0, fully open** |
 | Self-host | Community free; Enterprise paid | Yes, free | No | **Always free, always self-hosted** |
@@ -127,8 +127,8 @@ Every business entity is declared as a YAML **Entity Definition**. The metadata 
 ### 1. Clone and create a virtual environment
 
 ```bash
-git clone https://github.com/magbotta/ochre-erp.git
-cd ochre-erp
+git clone https://github.com/magbotta/odum-erp-suite.git
+cd odum-erp-suite
 python3 -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
 ```
@@ -272,8 +272,8 @@ sudo usermod -aG docker $USER
 ### 2. Clone the repository
 
 ```bash
-git clone https://github.com/magbotta/ochre-erp.git
-cd ochre-erp
+git clone https://github.com/magbotta/odum-erp-suite.git
+cd odum-erp-suite
 ```
 
 ### 3. Configure environment
@@ -393,7 +393,7 @@ helm upgrade ochre . -f values.local.yaml --namespace ochre
 
 ```yaml
 image:
-  repository: ghcr.io/magbotta/ochre-erp
+  repository: ghcr.io/magbotta/odum-erp-suite
   tag: "latest"
 
 env:
@@ -428,14 +428,14 @@ sudo apt-get update && sudo apt-get install -y \
 sudo useradd --system --create-home --shell /bin/bash ochre
 
 # 3. Clone and install
-sudo -u ochre git clone https://github.com/magbotta/ochre-erp.git /opt/ochre-erp
-cd /opt/ochre-erp
+sudo -u ochre git clone https://github.com/magbotta/odum-erp-suite.git /opt/odum-erp-suite
+cd /opt/odum-erp-suite
 sudo -u ochre python3.12 -m venv .venv
 sudo -u ochre .venv/bin/pip install -r requirements/production.txt
 
 # 4. Configure environment
 sudo -u ochre cp .env.example .env
-# Edit /opt/ochre-erp/.env
+# Edit /opt/odum-erp-suite/.env
 
 # 5. Migrate and collect static files
 sudo -u ochre .venv/bin/python manage.py migrate
@@ -508,7 +508,7 @@ POST /api/v1/government/tenders/{id}/award
 ## Project Structure
 
 ```
-ochre-erp/
+odum-erp-suite/
 ├── config/                  # Django settings (base, development, production)
 │   ├── settings/
 │   ├── urls.py
@@ -589,4 +589,4 @@ apps/<app>/
 
 Apache License 2.0 — see [LICENSE](LICENSE) for the full text.
 
-Ochre ERP is free to use, modify, and self-host forever. There is no Enterprise tier, no license server, and no phone-home.
+Odum ERP Suite is free to use, modify, and self-host forever. There is no Enterprise tier, no license server, and no phone-home.

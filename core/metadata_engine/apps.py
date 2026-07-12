@@ -4,7 +4,7 @@ from django.apps import AppConfig
 class MetadataEngineConfig(AppConfig):
     name = "core.metadata_engine"
     label = "ochre_metadata"
-    verbose_name = "Ochre Metadata Engine"
+    verbose_name = "Odum Metadata Engine"
 
     def ready(self):
         from pathlib import Path

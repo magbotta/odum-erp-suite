@@ -8,7 +8,7 @@ from django.db import models
 
 class BaseEntity(models.Model):
     """
-    Common fields for every entity in Ochre ERP.
+    Common fields for every entity in Odum ERP Suite.
     Provides: UUID PK, company scoping, timestamps, soft-delete, JSONB custom fields.
     """
 
