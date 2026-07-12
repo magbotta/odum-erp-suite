@@ -2,8 +2,6 @@
 Dynamically generates Django Ninja routers from EntityDefinition objects.
 Called at startup by PlatformAPIConfig.ready() after all entities are registered.
 """
-from __future__ import annotations
-
 import logging
 from typing import Any, Optional, TYPE_CHECKING
 
@@ -14,6 +12,24 @@ if TYPE_CHECKING:
     from .definitions import EntityDefinition
 
 logger = logging.getLogger("ochre.metadata_engine.api_factory")
+
+
+def _obj_to_dict(obj) -> dict:
+    """Serialize a Django model instance to a plain dict, including auto fields."""
+    import uuid
+    from datetime import date, datetime
+
+    result = {}
+    for field in obj._meta.concrete_fields:
+        val = getattr(obj, field.attname)
+        if isinstance(val, uuid.UUID):
+            val = str(val)
+        elif isinstance(val, datetime):
+            val = val.isoformat()
+        elif isinstance(val, date):
+            val = val.isoformat()
+        result[field.name] = val
+    return result
 
 # Maps entity field types → Python/Pydantic types
 _PYTHON_TYPE: dict[str, type] = {
@@ -98,11 +114,10 @@ def build_entity_router(definition: "EntityDefinition") -> Router:
         if model is None:
             return []
         qs = model.objects.filter(is_deleted=False)
-        # Apply company scoping
         if hasattr(request, "active_company_id") and request.active_company_id:
             qs = qs.filter(company_id=request.active_company_id)
         offset = (page - 1) * page_size
-        return list(qs[offset : offset + page_size].values())
+        return [_obj_to_dict(obj) for obj in qs[offset : offset + page_size]]
 
     @router.get("/{id}", response=ReadSchema, summary=f"Get {definition.display_label}")
     def get_entity(request, id: str):
@@ -114,8 +129,7 @@ def build_entity_router(definition: "EntityDefinition") -> Router:
             obj = model.objects.get(pk=id, is_deleted=False)
         except model.DoesNotExist:
             raise HttpError(404, "Not found")
-        from django.forms.models import model_to_dict
-        return {**model_to_dict(obj), "id": str(obj.pk)}
+        return _obj_to_dict(obj)
 
     @router.post("", response=ReadSchema, summary=f"Create {definition.display_label}")
     def create_entity(request, payload: CreateSchema):
@@ -129,8 +143,7 @@ def build_entity_router(definition: "EntityDefinition") -> Router:
         if hasattr(request, "user") and request.user.is_authenticated:
             data["created_by_id"] = request.user.id
         obj = model.objects.create(**data)
-        from django.forms.models import model_to_dict
-        return {**model_to_dict(obj), "id": str(obj.pk)}
+        return _obj_to_dict(obj)
 
     @router.patch("/{id}", response=ReadSchema, summary=f"Update {definition.display_label}")
     def update_entity(request, id: str, payload: UpdateSchema):
@@ -148,8 +161,7 @@ def build_entity_router(definition: "EntityDefinition") -> Router:
         if hasattr(request, "user") and request.user.is_authenticated:
             obj.updated_by_id = request.user.id
         obj.save()
-        from django.forms.models import model_to_dict
-        return {**model_to_dict(obj), "id": str(obj.pk)}
+        return _obj_to_dict(obj)
 
     @router.delete("/{id}", summary=f"Delete {definition.display_label}")
     def delete_entity(request, id: str):
