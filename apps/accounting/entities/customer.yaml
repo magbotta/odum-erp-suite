@@ -1,0 +1,47 @@
+entity: Customer
+app: accounting
+label: Customer
+label_plural: Customers
+description: Accounts-receivable customer master (§6.1).
+
+fields:
+  - name: customer_name
+    type: string
+    required: true
+
+  - name: customer_type
+    type: select
+    options: [individual, company]
+    default: company
+
+  - name: tax_id
+    type: string
+
+  - name: credit_limit
+    type: currency
+    default: 0
+
+  - name: payment_terms
+    type: string
+    label: Payment Terms (e.g. Net 30)
+
+  - name: default_currency
+    type: string
+    default: USD
+
+  - name: billing_address
+    type: text
+
+  - name: email
+    type: email
+
+  - name: phone
+    type: phone
+
+permissions:
+  - role: Accountant
+    read: true
+    write: true
+
+  - role: Sales Rep
+    read: true

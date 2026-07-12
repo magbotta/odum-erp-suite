@@ -1,0 +1,73 @@
+entity: Lead
+app: crm
+label: Lead
+label_plural: Leads
+description: An unqualified sales prospect.
+is_submittable: true
+
+fields:
+  - name: title
+    type: string
+    required: true
+    label: Lead Title / Subject
+
+  - name: contact_name
+    type: string
+    required: true
+
+  - name: email
+    type: email
+
+  - name: phone
+    type: phone
+
+  - name: company
+    type: string
+    label: Company
+
+  - name: lead_source
+    type: select
+    options: [Website, Referral, Cold Outreach, Event, Advertisement, Other]
+
+  - name: score
+    type: integer
+    default: 0
+    label: Lead Score
+
+  - name: notes
+    type: text
+
+workflow:
+  states: [New, Working, Nurturing, Converted, Disqualified]
+  transitions:
+    - from: New
+      to: Working
+    - from: Working
+      to: Nurturing
+    - from: Working
+      to: Converted
+      action: convert_lead_to_opportunity
+    - from: Working
+      to: Disqualified
+    - from: Nurturing
+      to: Converted
+      action: convert_lead_to_opportunity
+    - from: Nurturing
+      to: Disqualified
+
+hooks:
+  after_save:
+    - crm.hooks.lead.score_lead
+
+permissions:
+  - role: Sales Rep
+    read: true
+    write: true
+    submit: true
+
+  - role: Sales Manager
+    read: true
+    write: true
+    submit: true
+    cancel: true
+    delete: true

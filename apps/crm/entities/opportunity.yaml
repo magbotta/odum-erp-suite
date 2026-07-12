@@ -1,0 +1,68 @@
+entity: Opportunity
+app: crm
+label: Opportunity
+label_plural: Opportunities
+description: A qualified sales opportunity (§6.3).
+is_submittable: true
+
+fields:
+  - name: name
+    type: string
+    required: true
+    label: Opportunity Name
+
+  - name: amount
+    type: currency
+
+  - name: currency
+    type: string
+    default: USD
+
+  - name: probability
+    type: integer
+    default: 0
+    label: Win Probability (%)
+
+  - name: expected_close_date
+    type: date
+
+  - name: forecast_category
+    type: select
+    options: [pipeline, best_case, commit, closed_won, closed_lost]
+    default: pipeline
+
+  - name: win_reason
+    type: text
+
+  - name: loss_reason
+    type: text
+
+  - name: description
+    type: text
+
+workflow:
+  states: [Prospecting, Qualification, Needs Analysis, Value Proposition, Decision Making, Closed Won, Closed Lost]
+  transitions:
+    - from: Prospecting
+      to: Qualification
+    - from: Qualification
+      to: Needs Analysis
+    - from: Needs Analysis
+      to: Value Proposition
+    - from: Value Proposition
+      to: Decision Making
+    - from: Decision Making
+      to: Closed Won
+    - from: Decision Making
+      to: Closed Lost
+
+permissions:
+  - role: Sales Rep
+    read: true
+    write: true
+
+  - role: Sales Manager
+    read: true
+    write: true
+    submit: true
+    cancel: true

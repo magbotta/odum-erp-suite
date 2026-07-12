@@ -1,0 +1,52 @@
+entity: Item
+app: warehouse
+label: Item
+label_plural: Items
+description: Product, raw material, or service in the item master (§6.9).
+
+fields:
+  - name: item_code
+    type: string
+    required: true
+    unique: true
+
+  - name: item_name
+    type: string
+    required: true
+
+  - name: description
+    type: text
+
+  - name: is_stock_item
+    type: boolean
+    default: true
+
+  - name: is_purchase_item
+    type: boolean
+    default: true
+
+  - name: is_sales_item
+    type: boolean
+    default: true
+
+  - name: standard_selling_price
+    type: currency
+
+  - name: standard_buying_price
+    type: currency
+
+  - name: valuation_method
+    type: select
+    options: [fifo, moving_avg, standard]
+    default: fifo
+
+permissions:
+  - role: Stock Manager
+    read: true
+    write: true
+
+  - role: Sales Rep
+    read: true
+
+  - role: Purchase Manager
+    read: true

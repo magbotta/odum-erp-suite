@@ -1,0 +1,45 @@
+entity: StockEntry
+app: warehouse
+label: Stock Entry
+label_plural: Stock Entries
+description: A stock movement — receipt, issue, transfer, or adjustment (§6.9).
+is_submittable: true
+
+fields:
+  - name: entry_type
+    type: select
+    required: true
+    options: [receipt, issue, transfer, adjustment]
+
+  - name: posting_date
+    type: date
+    required: true
+
+  - name: remarks
+    type: text
+
+  - name: total_value
+    type: currency
+    default: 0
+
+workflow:
+  states: [Draft, Submitted, Cancelled]
+  transitions:
+    - from: Draft
+      to: Submitted
+      action: warehouse.hooks.stock_entry.post_stock_ledger
+    - from: Draft
+      to: Cancelled
+    - from: Submitted
+      to: Cancelled
+
+hooks:
+  after_submit:
+    - warehouse.hooks.stock_entry.post_stock_ledger
+
+permissions:
+  - role: Stock Manager
+    read: true
+    write: true
+    submit: true
+    cancel: true

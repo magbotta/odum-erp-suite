@@ -1,0 +1,41 @@
+entity: Vendor
+app: accounting
+label: Vendor
+label_plural: Vendors
+description: AP vendor / supplier master (§6.1).
+
+fields:
+  - name: vendor_name
+    type: string
+    required: true
+
+  - name: vendor_type
+    type: string
+
+  - name: tax_id
+    type: string
+
+  - name: payment_terms
+    type: string
+
+  - name: default_currency
+    type: string
+    default: USD
+
+  - name: billing_address
+    type: text
+
+  - name: email
+    type: email
+
+  - name: phone
+    type: phone
+
+permissions:
+  - role: Accountant
+    read: true
+    write: true
+
+  - role: Purchase Manager
+    read: true
+    write: true

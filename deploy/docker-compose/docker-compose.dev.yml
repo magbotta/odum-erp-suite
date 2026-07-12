@@ -1,0 +1,68 @@
+version: "3.9"
+
+# Local development stack.
+# Usage: docker compose -f docker-compose.dev.yml up
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ochre
+      POSTGRES_USER: ochre
+      POSTGRES_PASSWORD: ochre
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  app:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+      target: development
+    env_file:
+      - ../../.env
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.development
+      DATABASE_URL: postgres://ochre:ochre@db:5432/ochre
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../..:/app
+    depends_on:
+      - db
+      - redis
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+
+  worker:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+      target: development
+    env_file:
+      - ../../.env
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.development
+      DATABASE_URL: postgres://ochre:ochre@db:5432/ochre
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+    volumes:
+      - ../..:/app
+    depends_on:
+      - db
+      - redis
+    command: celery -A config worker -l debug
+
+volumes:
+  postgres_dev_data:

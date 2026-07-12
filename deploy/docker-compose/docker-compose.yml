@@ -1,0 +1,108 @@
+version: "3.9"
+
+# Production-grade Docker Compose stack.
+# For local dev, see docker-compose.dev.yml.
+
+x-ochre-env: &ochre-env
+  env_file:
+    - .env
+  environment:
+    DJANGO_SETTINGS_MODULE: config.settings.production
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ochre
+      POSTGRES_USER: ochre
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ochre}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "ochre"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    image: ochre-erp:latest
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+      target: production
+    restart: unless-stopped
+    <<: *ochre-env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - media_files:/app/media
+      - static_files:/app/staticfiles
+    expose:
+      - "8000"
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             gunicorn config.wsgi:application
+               --bind 0.0.0.0:8000
+               --workers 4
+               --timeout 120
+               --access-logfile -"
+
+  worker:
+    image: ochre-erp:latest
+    restart: unless-stopped
+    <<: *ochre-env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: celery -A config worker -l info -c 4 -Q default,high,low
+
+  beat:
+    image: ochre-erp:latest
+    restart: unless-stopped
+    <<: *ochre-env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+      - static_files:/srv/static:ro
+      - media_files:/srv/media:ro
+    depends_on:
+      - app
+
+volumes:
+  postgres_data:
+  redis_data:
+  media_files:
+  static_files:
+  caddy_data:
+  caddy_config:

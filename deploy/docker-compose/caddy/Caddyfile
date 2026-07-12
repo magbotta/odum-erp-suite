@@ -1,0 +1,28 @@
+# Replace your.domain.com with your actual domain.
+# Caddy handles HTTPS automatically via Let's Encrypt.
+
+your.domain.com {
+    # Static files served directly from disk
+    handle /static/* {
+        root * /srv
+        file_server
+    }
+
+    handle /media/* {
+        root * /srv
+        file_server
+    }
+
+    # Everything else proxied to the Django app
+    reverse_proxy app:8000 {
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+    }
+
+    encode gzip
+    log {
+        output stdout
+        format json
+    }
+}

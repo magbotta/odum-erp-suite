@@ -1,0 +1,70 @@
+entity: SalesOrder
+app: sales
+label: Sales Order
+label_plural: Sales Orders
+description: A confirmed customer order (§6.8).
+is_submittable: true
+
+fields:
+  - name: so_number
+    type: string
+
+  - name: posting_date
+    type: date
+    required: true
+
+  - name: delivery_date
+    type: date
+
+  - name: currency
+    type: string
+    default: USD
+
+  - name: net_total
+    type: currency
+    default: 0
+
+  - name: grand_total
+    type: currency
+    default: 0
+
+  - name: terms
+    type: text
+
+  - name: notes
+    type: text
+
+workflow:
+  states: [Draft, Submitted, Processing, Partially Delivered, Delivered, Billed, Cancelled]
+  transitions:
+    - from: Draft
+      to: Submitted
+    - from: Submitted
+      to: Processing
+    - from: Processing
+      to: Partially Delivered
+    - from: Processing
+      to: Delivered
+    - from: Partially Delivered
+      to: Delivered
+    - from: Delivered
+      to: Billed
+    - from: Draft
+      to: Cancelled
+    - from: Submitted
+      to: Cancelled
+
+permissions:
+  - role: Sales Rep
+    read: true
+    write: true
+    submit: true
+
+  - role: Sales Manager
+    read: true
+    write: true
+    submit: true
+    cancel: true
+
+  - role: Accountant
+    read: true

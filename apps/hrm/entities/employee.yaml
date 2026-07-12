@@ -1,0 +1,54 @@
+entity: Employee
+app: hrm
+label: Employee
+label_plural: Employees
+description: Core employee record (§6.4).
+
+fields:
+  - name: employee_number
+    type: string
+    required: true
+    unique: true
+
+  - name: first_name
+    type: string
+    required: true
+
+  - name: last_name
+    type: string
+    required: true
+
+  - name: email
+    type: email
+    required: true
+
+  - name: phone
+    type: phone
+
+  - name: designation
+    type: string
+    label: Job Title
+
+  - name: date_of_joining
+    type: date
+
+  - name: employment_type
+    type: select
+    options: [full_time, part_time, contract, intern]
+    default: full_time
+
+  - name: status
+    type: select
+    options: [active, on_leave, resigned, terminated]
+    default: active
+
+permissions:
+  - role: HR Manager
+    read: true
+    write: true
+
+  - role: Manager
+    read: true
+
+  - role: Employee
+    read: true

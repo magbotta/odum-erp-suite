@@ -1,0 +1,4 @@
+-r base.txt
+gunicorn>=22.0
+whitenoise>=6.7
+sentry-sdk>=2.0

@@ -1,0 +1,76 @@
+entity: SalesInvoice
+app: accounting
+label: Sales Invoice
+label_plural: Sales Invoices
+description: Customer AR invoice with automatic GL posting on submission (§6.1).
+is_submittable: true
+track_changes: true
+
+fields:
+  - name: invoice_number
+    type: string
+
+  - name: posting_date
+    type: date
+    required: true
+
+  - name: due_date
+    type: date
+
+  - name: currency
+    type: string
+    default: USD
+
+  - name: exchange_rate
+    type: float
+    default: 1
+
+  - name: net_total
+    type: currency
+    default: 0
+
+  - name: tax_total
+    type: currency
+    default: 0
+
+  - name: grand_total
+    type: currency
+    default: 0
+
+  - name: outstanding_amount
+    type: currency
+    default: 0
+
+  - name: notes
+    type: text
+
+workflow:
+  states: [Draft, Submitted, Paid, Partially Paid, Overdue, Cancelled]
+  transitions:
+    - from: Draft
+      to: Submitted
+      action: accounting.hooks.sales_invoice.post_invoice_to_gl
+    - from: Submitted
+      to: Paid
+    - from: Submitted
+      to: Partially Paid
+    - from: Submitted
+      to: Overdue
+    - from: Draft
+      to: Cancelled
+    - from: Submitted
+      to: Cancelled
+
+hooks:
+  after_submit:
+    - accounting.hooks.sales_invoice.post_invoice_to_gl
+
+permissions:
+  - role: Accountant
+    read: true
+    write: true
+    submit: true
+    cancel: true
+
+  - role: Sales Rep
+    read: true

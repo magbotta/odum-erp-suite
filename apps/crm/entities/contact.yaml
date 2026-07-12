@@ -1,0 +1,47 @@
+entity: Contact
+app: crm
+label: Contact
+label_plural: Contacts
+description: A person or organization in the CRM.
+
+fields:
+  - name: first_name
+    type: string
+    required: true
+
+  - name: last_name
+    type: string
+    required: true
+
+  - name: email
+    type: email
+    unique: true
+
+  - name: phone
+    type: phone
+
+  - name: company_name
+    type: string
+    label: Company / Organization
+
+  - name: lead_source
+    type: select
+    options: [Website, Referral, Cold Outreach, Event, Advertisement, Other]
+
+  - name: notes
+    type: text
+
+permissions:
+  - role: Sales Rep
+    read: true
+    write: true
+
+  - role: Sales Manager
+    read: true
+    write: true
+    delete: true
+
+  - role: Admin
+    read: true
+    write: true
+    delete: true

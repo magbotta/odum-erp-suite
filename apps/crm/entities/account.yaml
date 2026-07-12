@@ -1,0 +1,47 @@
+entity: Account
+app: crm
+label: Account
+label_plural: Accounts
+description: A company or organization in the CRM (§6.3).
+
+fields:
+  - name: name
+    type: string
+    required: true
+
+  - name: industry
+    type: select
+    options: [technology, finance, healthcare, manufacturing, retail, education, government, other]
+
+  - name: website
+    type: url
+
+  - name: phone
+    type: phone
+
+  - name: billing_address
+    type: text
+
+  - name: annual_revenue
+    type: currency
+
+  - name: employee_count
+    type: integer
+
+  - name: description
+    type: text
+
+permissions:
+  - role: Sales Rep
+    read: true
+    write: true
+
+  - role: Sales Manager
+    read: true
+    write: true
+    delete: true
+
+  - role: Admin
+    read: true
+    write: true
+    delete: true
