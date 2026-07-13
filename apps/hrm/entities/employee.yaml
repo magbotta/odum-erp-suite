@@ -9,6 +9,7 @@ fields:
     type: string
     required: true
     unique: true
+    label: Employee ID
 
   - name: first_name
     type: string
@@ -22,7 +23,13 @@ fields:
     type: email
     required: true
 
+  - name: personal_email
+    type: email
+
   - name: phone
+    type: phone
+
+  - name: mobile
     type: phone
 
   - name: designation
@@ -32,6 +39,16 @@ fields:
   - name: date_of_joining
     type: date
 
+  - name: date_of_birth
+    type: date
+
+  - name: gender
+    type: select
+    options: [male, female, other, prefer_not_to_say]
+
+  - name: nationality
+    type: string
+
   - name: employment_type
     type: select
     options: [full_time, part_time, contract, intern]
@@ -39,13 +56,27 @@ fields:
 
   - name: status
     type: select
-    options: [active, on_leave, resigned, terminated]
+    options: [active, on_leave, probation, resigned, terminated]
     default: active
+
+  - name: notice_period_days
+    type: integer
+    default: 30
+
+  - name: emergency_contact_name
+    type: string
+
+  - name: emergency_contact_phone
+    type: phone
+
+  - name: emergency_contact_relation
+    type: string
 
 permissions:
   - role: HR Manager
     read: true
     write: true
+    delete: true
 
   - role: Manager
     read: true

@@ -22,6 +22,7 @@ api.add_router("/auth", auth_router)
 # --- Phase 1 business app action routers ---
 from apps.accounting.api import router as accounting_router  # noqa: E402
 from apps.crm.api import router as crm_router  # noqa: E402
+from apps.hrm.api import router as hrm_router  # noqa: E402
 from apps.purchasing.api import router as purchasing_router  # noqa: E402
 from apps.sales.api import router as sales_router  # noqa: E402
 from apps.manufacturing.api import router as manufacturing_router  # noqa: E402
@@ -29,6 +30,7 @@ from apps.pos.api import router as pos_router  # noqa: E402
 
 api.add_router("/accounting", accounting_router)
 api.add_router("/crm", crm_router)
+api.add_router("/hrm", hrm_router)
 api.add_router("/purchasing", purchasing_router)
 api.add_router("/sales", sales_router)
 api.add_router("/manufacturing", manufacturing_router)

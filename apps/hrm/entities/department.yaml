@@ -1,0 +1,25 @@
+entity: Department
+app: hrm
+label: Department
+label_plural: Departments
+description: Organisational unit / cost centre node.
+
+fields:
+  - name: name
+    type: string
+    required: true
+
+  - name: description
+    type: text
+
+permissions:
+  - role: HR Manager
+    read: true
+    write: true
+    delete: true
+
+  - role: Manager
+    read: true
+
+  - role: Employee
+    read: true

@@ -1,0 +1,56 @@
+entity: Goal
+app: hrm
+label: Goal
+label_plural: Goals
+description: Employee OKR / goal tracking (§6.4 Performance).
+
+fields:
+  - name: title
+    type: string
+    required: true
+
+  - name: description
+    type: text
+
+  - name: key_results
+    type: text
+    label: Key Results
+
+  - name: target_date
+    type: date
+
+  - name: period
+    type: string
+    label: Period (e.g. Q3 2026)
+
+  - name: weight
+    type: float
+    default: 1
+    label: Weight
+
+  - name: progress_pct
+    type: integer
+    default: 0
+    label: Progress (%)
+
+  - name: status
+    type: select
+    options: [not_started, in_progress, completed, cancelled]
+    default: not_started
+
+  - name: final_score
+    type: float
+
+permissions:
+  - role: HR Manager
+    read: true
+    write: true
+    delete: true
+
+  - role: Manager
+    read: true
+    write: true
+
+  - role: Employee
+    read: true
+    write: true

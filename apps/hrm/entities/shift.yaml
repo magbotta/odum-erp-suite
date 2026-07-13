@@ -1,0 +1,51 @@
+entity: Shift
+app: hrm
+label: Shift
+label_plural: Shifts
+description: Work shift definition — start/end time, OT threshold (§6.4).
+
+fields:
+  - name: name
+    type: string
+    required: true
+
+  - name: shift_type
+    type: select
+    options: [morning, afternoon, evening, night, flexible]
+    default: morning
+
+  - name: start_time
+    type: string
+    required: true
+
+  - name: end_time
+    type: string
+    required: true
+
+  - name: total_hours
+    type: float
+    default: 8
+
+  - name: late_entry_grace_minutes
+    type: integer
+    default: 15
+
+  - name: early_exit_grace_minutes
+    type: integer
+    default: 15
+
+  - name: overtime_threshold_hours
+    type: float
+    default: 8
+
+permissions:
+  - role: HR Manager
+    read: true
+    write: true
+    delete: true
+
+  - role: Manager
+    read: true
+
+  - role: Employee
+    read: true

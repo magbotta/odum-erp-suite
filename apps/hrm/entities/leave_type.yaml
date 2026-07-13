@@ -1,0 +1,51 @@
+entity: LeaveType
+app: hrm
+label: Leave Type
+label_plural: Leave Types
+description: Configurable leave category (annual, sick, maternity …).
+
+fields:
+  - name: name
+    type: string
+    required: true
+    unique: true
+
+  - name: days_allowed_per_year
+    type: float
+    default: 0
+
+  - name: is_paid
+    type: boolean
+    default: true
+
+  - name: carry_forward
+    type: boolean
+    default: false
+
+  - name: max_carry_forward_days
+    type: float
+    default: 0
+
+  - name: allow_negative_balance
+    type: boolean
+    default: false
+
+  - name: accrual_frequency
+    type: select
+    options: [monthly, quarterly, annually]
+    default: annually
+
+  - name: description
+    type: text
+
+permissions:
+  - role: HR Manager
+    read: true
+    write: true
+    delete: true
+
+  - role: Manager
+    read: true
+
+  - role: Employee
+    read: true

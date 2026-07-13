@@ -1,0 +1,43 @@
+entity: EmployeeDocument
+app: hrm
+label: Employee Document
+label_plural: Employee Documents
+description: Employee document tracking with expiry alerts (§6.4).
+
+fields:
+  - name: document_type
+    type: select
+    options: [contract, offer_letter, national_id, passport, visa, certificate, background_check, nda, policy_ack, other]
+    required: true
+
+  - name: document_name
+    type: string
+    required: true
+
+  - name: issue_date
+    type: date
+
+  - name: expiry_date
+    type: date
+
+  - name: document_number
+    type: string
+
+  - name: issuing_authority
+    type: string
+
+  - name: is_verified
+    type: boolean
+    default: false
+
+  - name: notes
+    type: text
+
+permissions:
+  - role: HR Manager
+    read: true
+    write: true
+    delete: true
+
+  - role: Employee
+    read: true

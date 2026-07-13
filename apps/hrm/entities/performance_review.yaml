@@ -1,0 +1,64 @@
+entity: PerformanceReview
+app: hrm
+label: Performance Review
+label_plural: Performance Reviews
+description: Performance review record — self, manager, peer, or 360° (§6.4).
+is_submittable: true
+
+fields:
+  - name: reviewer_name
+    type: string
+
+  - name: cycle_type
+    type: select
+    options: [self, manager, peer, "360"]
+    default: manager
+    label: Review Type
+
+  - name: period
+    type: string
+    required: true
+    label: Review Period
+
+  - name: overall_rating
+    type: float
+    label: Rating (out of 5)
+
+  - name: strengths
+    type: text
+
+  - name: areas_for_improvement
+    type: text
+
+  - name: comments
+    type: text
+
+  - name: status
+    type: select
+    options: [draft, submitted, acknowledged]
+    default: draft
+
+workflow:
+  states: [Draft, Submitted, Acknowledged]
+  transitions:
+    - from: Draft
+      to: Submitted
+      action: submit_review
+    - from: Submitted
+      to: Acknowledged
+      action: acknowledge_review
+
+permissions:
+  - role: HR Manager
+    read: true
+    write: true
+    submit: true
+
+  - role: Manager
+    read: true
+    write: true
+    submit: true
+
+  - role: Employee
+    read: true
+    write: true

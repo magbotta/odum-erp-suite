@@ -1,0 +1,62 @@
+entity: Attendance
+app: hrm
+label: Attendance
+label_plural: Attendance
+description: Per-day clock-in/out record per employee (§6.4).
+
+fields:
+  - name: attendance_date
+    type: date
+    required: true
+
+  - name: check_in
+    type: datetime
+
+  - name: check_out
+    type: datetime
+
+  - name: working_hours
+    type: float
+
+  - name: method
+    type: select
+    options: [manual, geo, qr, biometric]
+    default: manual
+
+  - name: status
+    type: select
+    options: [present, absent, half_day, on_leave, holiday, weekend]
+    default: present
+
+  - name: late_entry
+    type: boolean
+    default: false
+
+  - name: early_exit
+    type: boolean
+    default: false
+
+  - name: overtime_hours
+    type: float
+    default: 0
+
+  - name: notes
+    type: text
+
+hooks:
+  before_save:
+    - hrm.hooks.attendance.calculate_working_hours
+
+permissions:
+  - role: HR Manager
+    read: true
+    write: true
+    delete: true
+
+  - role: Manager
+    read: true
+    write: true
+
+  - role: Employee
+    read: true
+    write: true

@@ -1,0 +1,68 @@
+entity: JobPosition
+app: hrm
+label: Job Position
+label_plural: Job Positions
+description: Open headcount position / job requisition (§6.4).
+is_submittable: true
+
+fields:
+  - name: title
+    type: string
+    required: true
+    label: Position Title
+
+  - name: headcount
+    type: integer
+    default: 1
+
+  - name: employment_type
+    type: select
+    options: [full_time, part_time, contract, intern]
+    default: full_time
+
+  - name: location
+    type: string
+
+  - name: description
+    type: text
+    label: Job Description
+
+  - name: requirements
+    type: text
+    label: Requirements
+
+  - name: expected_start_date
+    type: date
+
+  - name: status
+    type: select
+    options: [draft, open, on_hold, filled, cancelled]
+    default: open
+
+workflow:
+  states: [Draft, Open, On Hold, Filled, Cancelled]
+  transitions:
+    - from: Draft
+      to: Open
+    - from: Open
+      to: On Hold
+    - from: Open
+      to: Filled
+    - from: Open
+      to: Cancelled
+    - from: On Hold
+      to: Open
+    - from: On Hold
+      to: Cancelled
+
+permissions:
+  - role: HR Manager
+    read: true
+    write: true
+    submit: true
+    cancel: true
+    delete: true
+
+  - role: Manager
+    read: true
+    write: true

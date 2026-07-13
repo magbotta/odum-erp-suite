@@ -1,0 +1,59 @@
+entity: JobApplicant
+app: hrm
+label: Job Applicant
+label_plural: Job Applicants
+description: A candidate in the recruitment pipeline (§6.4).
+
+fields:
+  - name: applicant_name
+    type: string
+    required: true
+
+  - name: email
+    type: email
+    required: true
+
+  - name: phone
+    type: phone
+
+  - name: source
+    type: select
+    options: [direct, referral, linkedin, job_board, recruiter, campus, other]
+    default: direct
+
+  - name: status
+    type: select
+    options: [applied, screening, shortlisted, interview, offer, hired, rejected, withdrawn]
+    default: applied
+
+  - name: applied_date
+    type: date
+    required: true
+
+  - name: experience_years
+    type: float
+
+  - name: current_salary
+    type: currency
+
+  - name: expected_salary
+    type: currency
+
+  - name: cover_letter
+    type: text
+
+  - name: notes
+    type: text
+
+  - name: rejection_reason
+    type: text
+
+permissions:
+  - role: HR Manager
+    read: true
+    write: true
+    delete: true
+
+  - role: Manager
+    read: true
+    write: true

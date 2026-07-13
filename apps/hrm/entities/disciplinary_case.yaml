@@ -1,0 +1,53 @@
+entity: DisciplinaryCase
+app: hrm
+label: Disciplinary Case
+label_plural: Disciplinary Cases
+description: Disciplinary / grievance case management (§6.4). Confidential by default.
+
+fields:
+  - name: case_type
+    type: select
+    options: [verbal_warning, warning, suspension, demotion, termination, grievance, investigation]
+    required: true
+
+  - name: incident_date
+    type: date
+    required: true
+
+  - name: description
+    type: text
+    required: true
+
+  - name: status
+    type: select
+    options: [open, under_review, resolved, closed, appealed]
+    default: open
+
+  - name: resolution
+    type: text
+
+  - name: is_confidential
+    type: boolean
+    default: true
+
+workflow:
+  states: [Open, Under Review, Resolved, Closed, Appealed]
+  transitions:
+    - from: Open
+      to: Under Review
+    - from: Under Review
+      to: Resolved
+    - from: Resolved
+      to: Closed
+    - from: Resolved
+      to: Appealed
+    - from: Appealed
+      to: Under Review
+
+permissions:
+  - role: HR Manager
+    read: true
+    write: true
+    submit: true
+    cancel: true
+    delete: true

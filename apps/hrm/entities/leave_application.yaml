@@ -1,0 +1,63 @@
+entity: LeaveApplication
+app: hrm
+label: Leave Application
+label_plural: Leave Applications
+description: Employee leave request with multi-level approval (§6.4).
+is_submittable: true
+
+fields:
+  - name: from_date
+    type: date
+    required: true
+
+  - name: to_date
+    type: date
+    required: true
+
+  - name: total_days
+    type: float
+    required: true
+
+  - name: reason
+    type: text
+
+  - name: status
+    type: select
+    options: [pending, approved, rejected, cancelled]
+    default: pending
+
+  - name: rejection_reason
+    type: text
+
+workflow:
+  states: [Pending, Approved, Rejected, Cancelled]
+  transitions:
+    - from: Pending
+      to: Approved
+      action: approve_leave
+    - from: Pending
+      to: Rejected
+      action: reject_leave
+    - from: Pending
+      to: Cancelled
+    - from: Approved
+      to: Cancelled
+
+hooks:
+  after_save:
+    - hrm.hooks.leave_application.update_leave_balance
+
+permissions:
+  - role: HR Manager
+    read: true
+    write: true
+    submit: true
+    cancel: true
+
+  - role: Manager
+    read: true
+    write: true
+
+  - role: Employee
+    read: true
+    write: true
