@@ -1,0 +1,40 @@
+entity: Competitor
+app: crm
+label: Competitor
+label_plural: Competitors
+description: A competitor tracked against opportunities (§6.3).
+
+fields:
+  - name: name
+    type: string
+    required: true
+    label: Competitor Name
+
+  - name: website
+    type: url
+
+  - name: strengths
+    type: text
+    label: Strengths
+
+  - name: weaknesses
+    type: text
+    label: Weaknesses
+
+  - name: description
+    type: text
+
+permissions:
+  - role: Sales Rep
+    read: true
+    write: true
+
+  - role: Sales Manager
+    read: true
+    write: true
+    delete: true
+
+  - role: Admin
+    read: true
+    write: true
+    delete: true

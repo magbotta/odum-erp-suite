@@ -2,34 +2,46 @@ entity: Contact
 app: crm
 label: Contact
 label_plural: Contacts
-description: A person or organization in the CRM.
+description: A person linked to an Account in the CRM (§6.3).
 
 fields:
   - name: first_name
     type: string
     required: true
+    label: First Name
 
   - name: last_name
     type: string
     required: true
+    label: Last Name
 
   - name: email
     type: email
-    unique: true
 
   - name: phone
     type: phone
 
-  - name: company_name
+  - name: mobile
+    type: phone
+    label: Mobile
+
+  - name: title
     type: string
-    label: Company / Organization
+    label: Job Title
+
+  - name: department
+    type: string
+    label: Department
 
   - name: lead_source
     type: select
-    options: [Website, Referral, Cold Outreach, Event, Advertisement, Other]
+    options: [website, referral, cold_outreach, event, advertisement, other]
+    label: Lead Source
 
-  - name: notes
-    type: text
+  - name: do_not_contact
+    type: boolean
+    default: false
+    label: Do Not Contact
 
 permissions:
   - role: Sales Rep

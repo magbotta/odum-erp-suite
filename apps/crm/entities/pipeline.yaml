@@ -1,0 +1,30 @@
+entity: Pipeline
+app: crm
+label: Pipeline
+label_plural: Pipelines
+description: A named sales pipeline with configurable stages (§6.3).
+
+fields:
+  - name: name
+    type: string
+    required: true
+    label: Pipeline Name
+
+  - name: description
+    type: text
+
+  - name: is_default
+    type: boolean
+    default: false
+    label: Default Pipeline
+
+permissions:
+  - role: Sales Manager
+    read: true
+    write: true
+    delete: true
+
+  - role: Admin
+    read: true
+    write: true
+    delete: true

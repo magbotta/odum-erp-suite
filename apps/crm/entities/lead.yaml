@@ -25,10 +25,6 @@ fields:
     type: string
     label: Company
 
-  - name: lead_source
-    type: select
-    options: [Website, Referral, Cold Outreach, Event, Advertisement, Other]
-
   - name: score
     type: integer
     default: 0
@@ -36,6 +32,11 @@ fields:
 
   - name: notes
     type: text
+
+  - name: lead_source
+    type: select
+    options: [website, referral, cold_outreach, event, advertisement, other]
+    label: Lead Source
 
 workflow:
   states: [New, Working, Nurturing, Converted, Disqualified]

@@ -1,0 +1,42 @@
+entity: PipelineStage
+app: crm
+label: Pipeline Stage
+label_plural: Pipeline Stages
+description: An ordered stage within a Pipeline (§6.3).
+
+fields:
+  - name: name
+    type: string
+    required: true
+    label: Stage Name
+
+  - name: sequence
+    type: integer
+    default: 0
+    label: Sequence Order
+
+  - name: probability
+    type: integer
+    default: 0
+    label: Default Win Probability (%)
+
+  - name: is_won
+    type: boolean
+    default: false
+    label: Closed Won Stage
+
+  - name: is_lost
+    type: boolean
+    default: false
+    label: Closed Lost Stage
+
+permissions:
+  - role: Sales Manager
+    read: true
+    write: true
+    delete: true
+
+  - role: Admin
+    read: true
+    write: true
+    delete: true

@@ -53,8 +53,14 @@ workflow:
       to: Decision Making
     - from: Decision Making
       to: Closed Won
+      action: close_won
     - from: Decision Making
       to: Closed Lost
+      action: close_lost
+
+hooks:
+  after_save:
+    - crm.hooks.opportunity.sync_stage_probability
 
 permissions:
   - role: Sales Rep

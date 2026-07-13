@@ -1,0 +1,79 @@
+entity: Campaign
+app: crm
+label: Campaign
+label_plural: Campaigns
+description: A marketing campaign for UTM/source tracking on Leads (§6.3).
+
+fields:
+  - name: name
+    type: string
+    required: true
+    label: Campaign Name
+
+  - name: campaign_type
+    type: select
+    options: [email, social, ppc, event, webinar, content, other]
+    default: email
+    label: Type
+
+  - name: start_date
+    type: date
+    label: Start Date
+
+  - name: end_date
+    type: date
+    label: End Date
+
+  - name: budget
+    type: currency
+    label: Budget
+
+  - name: expected_revenue
+    type: currency
+    label: Expected Revenue
+
+  - name: utm_source
+    type: string
+    label: UTM Source
+
+  - name: utm_medium
+    type: string
+    label: UTM Medium
+
+  - name: utm_campaign
+    type: string
+    label: UTM Campaign
+
+  - name: description
+    type: text
+
+workflow:
+  states: [Draft, Active, Paused, Completed, Cancelled]
+  transitions:
+    - from: Draft
+      to: Active
+    - from: Active
+      to: Paused
+    - from: Paused
+      to: Active
+    - from: Active
+      to: Completed
+    - from: Draft
+      to: Cancelled
+    - from: Active
+      to: Cancelled
+
+permissions:
+  - role: Sales Rep
+    read: true
+    write: false
+
+  - role: Sales Manager
+    read: true
+    write: true
+    delete: true
+
+  - role: Admin
+    read: true
+    write: true
+    delete: true

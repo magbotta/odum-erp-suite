@@ -1,0 +1,86 @@
+entity: Quote
+app: crm
+label: Quote
+label_plural: Quotes
+description: A sales quote / light CPQ document sent to a customer (§6.3).
+
+fields:
+  - name: quote_number
+    type: string
+    label: Quote Number
+    read_only: true
+
+  - name: valid_until
+    type: date
+    label: Valid Until
+
+  - name: currency
+    type: string
+    default: USD
+    label: Currency
+
+  - name: subtotal
+    type: currency
+    label: Subtotal
+    read_only: true
+
+  - name: discount_amount
+    type: currency
+    label: Discount Amount
+    default: 0
+
+  - name: tax_amount
+    type: currency
+    label: Tax Amount
+    default: 0
+
+  - name: grand_total
+    type: currency
+    label: Grand Total
+    read_only: true
+
+  - name: terms_and_conditions
+    type: text
+    label: Terms & Conditions
+
+  - name: notes
+    type: text
+
+workflow:
+  states: [Draft, Sent, Accepted, Rejected, Expired, Converted]
+  transitions:
+    - from: Draft
+      to: Sent
+      action: send_to_customer
+    - from: Sent
+      to: Accepted
+      action: mark_accepted
+    - from: Sent
+      to: Rejected
+      action: mark_rejected
+    - from: Accepted
+      to: Converted
+      action: convert_to_order
+    - from: Draft
+      to: Expired
+    - from: Sent
+      to: Expired
+
+hooks:
+  before_save:
+    - crm.hooks.quote.recalculate_totals
+
+permissions:
+  - role: Sales Rep
+    read: true
+    write: true
+
+  - role: Sales Manager
+    read: true
+    write: true
+    delete: true
+
+  - role: Admin
+    read: true
+    write: true
+    delete: true

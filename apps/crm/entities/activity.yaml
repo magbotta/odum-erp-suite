@@ -1,0 +1,52 @@
+entity: Activity
+app: crm
+label: Activity
+label_plural: Activities
+description: A logged call, email, meeting, task, or note on any CRM record (§6.3).
+
+fields:
+  - name: activity_type
+    type: select
+    options: [call, email, meeting, task, note]
+    required: true
+    label: Type
+
+  - name: subject
+    type: string
+    required: true
+    label: Subject
+
+  - name: description
+    type: text
+    label: Details
+
+  - name: due_date
+    type: datetime
+    label: Due Date / Time
+
+  - name: duration_minutes
+    type: integer
+    label: Duration (minutes)
+
+workflow:
+  states: [Open, Done, Cancelled]
+  transitions:
+    - from: Open
+      to: Done
+      action: mark_done
+    - from: Open
+      to: Cancelled
+
+hooks:
+  before_save:
+    - crm.hooks.activity.stamp_done_at
+
+permissions:
+  - role: Sales Rep
+    read: true
+    write: true
+
+  - role: Sales Manager
+    read: true
+    write: true
+    delete: true

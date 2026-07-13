@@ -21,12 +21,19 @@ fields:
 
   - name: billing_address
     type: text
+    label: Billing Address
+
+  - name: shipping_address
+    type: text
+    label: Shipping Address
 
   - name: annual_revenue
     type: currency
+    label: Annual Revenue
 
   - name: employee_count
     type: integer
+    label: Employee Count
 
   - name: description
     type: text

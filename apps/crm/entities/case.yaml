@@ -1,0 +1,79 @@
+entity: Case
+app: crm
+label: Case
+label_plural: Cases
+description: A customer support case / service request with SLA tracking (§6.3).
+
+fields:
+  - name: subject
+    type: string
+    required: true
+    label: Subject
+
+  - name: description
+    type: text
+    label: Description
+
+  - name: priority
+    type: select
+    options: [low, medium, high, critical]
+    default: medium
+    label: Priority
+
+  - name: sla_hours
+    type: integer
+    label: SLA Response (hours)
+
+  - name: resolution_notes
+    type: text
+    label: Resolution Notes
+
+workflow:
+  states: [New, Open, Pending, Escalated, Resolved, Closed]
+  transitions:
+    - from: New
+      to: Open
+    - from: Open
+      to: Pending
+    - from: Pending
+      to: Open
+    - from: Open
+      to: Escalated
+      action: escalate
+    - from: Escalated
+      to: Open
+    - from: Open
+      to: Resolved
+      action: resolve
+    - from: Pending
+      to: Resolved
+      action: resolve
+    - from: Escalated
+      to: Resolved
+      action: resolve
+    - from: Resolved
+      to: Closed
+      action: close_case
+    - from: Resolved
+      to: Open
+
+hooks:
+  after_save:
+    - crm.hooks.case.set_sla_due
+  before_save:
+    - crm.hooks.case.check_sla_breach
+
+permissions:
+  - role: Sales Rep
+    read: true
+    write: true
+
+  - role: Sales Manager
+    read: true
+    write: true
+    delete: true
+
+  - role: Admin
+    read: true
+    write: true
+    delete: true
