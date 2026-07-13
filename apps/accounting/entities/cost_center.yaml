@@ -1,0 +1,30 @@
+entity: CostCenter
+app: accounting
+label: Cost Center
+label_plural: Cost Centers
+description: Cross-cutting reporting dimension for departmental or project cost analysis (§6.1).
+
+fields:
+  - name: name
+    type: string
+    label: Name
+    required: true
+
+  - name: cost_center_number
+    type: string
+    label: Cost Center Number
+
+  - name: is_group
+    type: boolean
+    label: Is Group
+    default: false
+
+  - name: is_active
+    type: boolean
+    label: Is Active
+    default: true
+
+permissions:
+  - role: Accountant
+    read: true
+    write: true

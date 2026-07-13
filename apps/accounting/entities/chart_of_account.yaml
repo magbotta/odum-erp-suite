@@ -1,0 +1,45 @@
+entity: ChartOfAccount
+app: accounting
+label: Chart of Account
+label_plural: Chart of Accounts
+description: General Ledger account node; supports hierarchical group/leaf structure (§6.1).
+
+fields:
+  - name: account_number
+    type: string
+    label: Account Number
+
+  - name: account_name
+    type: string
+    label: Account Name
+    required: true
+
+  - name: account_type
+    type: select
+    label: Account Type
+    options: [asset, liability, equity, income, expense]
+    required: true
+
+  - name: is_group
+    type: boolean
+    label: Is Group
+    default: false
+
+  - name: currency
+    type: string
+    label: Currency
+    default: USD
+
+  - name: description
+    type: text
+    label: Description
+
+  - name: is_active
+    type: boolean
+    label: Is Active
+    default: true
+
+permissions:
+  - role: Accountant
+    read: true
+    write: true

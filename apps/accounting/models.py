@@ -333,3 +333,233 @@ class Payment(BaseEntity):
 
     def __str__(self) -> str:
         return f"{self.payment_type} {self.amount} {self.currency} [{self.payment_date}]"
+
+
+# ---------------------------------------------------------------------------
+# New models added in full implementation (§6.1)
+# ---------------------------------------------------------------------------
+
+
+class PurchaseBillItem(BaseEntity):
+    """Line item on a PurchaseBill."""
+
+    bill = models.ForeignKey(PurchaseBill, on_delete=models.CASCADE, related_name="items")
+    description = models.CharField(max_length=255)
+    qty = models.DecimalField(max_digits=19, decimal_places=4, default=1)
+    rate = models.DecimalField(max_digits=19, decimal_places=4, default=0)
+    amount = models.DecimalField(max_digits=19, decimal_places=4, default=0)
+    expense_account = models.ForeignKey(
+        ChartOfAccount, null=True, blank=True, on_delete=models.SET_NULL,
+        related_name="purchase_bill_items",
+    )
+
+    class Meta(BaseEntity.Meta):
+        db_table = "accounting_purchase_bill_items"
+
+    def __str__(self) -> str:
+        return f"{self.description} × {self.qty}"
+
+
+class BankAccount(BaseEntity):
+    """A company bank account used for reconciliation (§6.1 Banking)."""
+
+    class BankAccountType(models.TextChoices):
+        SAVINGS = "savings", "Savings"
+        CURRENT = "current", "Current"
+        OVERDRAFT = "overdraft", "Overdraft"
+
+    account_name = models.CharField(max_length=255)
+    bank_name = models.CharField(max_length=255)
+    account_number = models.CharField(max_length=100, blank=True, help_text="Masked account number")
+    iban = models.CharField(max_length=34, blank=True)
+    swift_bic = models.CharField(max_length=11, blank=True)
+    currency = models.CharField(max_length=3, default="USD")
+    bank_account_type = models.CharField(
+        max_length=20, choices=BankAccountType.choices, default=BankAccountType.CURRENT
+    )
+    linked_gl_account = models.ForeignKey(
+        ChartOfAccount, null=True, blank=True, on_delete=models.SET_NULL,
+        related_name="bank_accounts",
+    )
+    is_active = models.BooleanField(default=True)
+
+    class Meta(BaseEntity.Meta):
+        db_table = "accounting_bank_accounts"
+        verbose_name = "Bank Account"
+        verbose_name_plural = "Bank Accounts"
+
+    def __str__(self) -> str:
+        return f"{self.account_name} ({self.bank_name})"
+
+
+class BankTransaction(BaseEntity):
+    """A single transaction on a BankAccount feed (§6.1 Banking)."""
+
+    class TransactionType(models.TextChoices):
+        DEBIT = "debit", "Debit"
+        CREDIT = "credit", "Credit"
+
+    bank_account = models.ForeignKey(BankAccount, on_delete=models.PROTECT, related_name="transactions")
+    transaction_date = models.DateField(db_index=True)
+    description = models.CharField(max_length=500)
+    debit_amount = models.DecimalField(max_digits=19, decimal_places=4, default=0)
+    credit_amount = models.DecimalField(max_digits=19, decimal_places=4, default=0)
+    running_balance = models.DecimalField(max_digits=19, decimal_places=4, default=0)
+    reference = models.CharField(max_length=100, blank=True)
+    transaction_type = models.CharField(max_length=10, choices=TransactionType.choices)
+    is_reconciled = models.BooleanField(default=False)
+    reconciled_je = models.ForeignKey(
+        JournalEntry, null=True, blank=True, on_delete=models.SET_NULL,
+        related_name="reconciled_bank_transactions",
+    )
+    reconciled_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta(BaseEntity.Meta):
+        db_table = "accounting_bank_transactions"
+        verbose_name = "Bank Transaction"
+        verbose_name_plural = "Bank Transactions"
+
+    def __str__(self) -> str:
+        return f"{self.transaction_date} {self.description} {self.debit_amount or self.credit_amount}"
+
+
+class FiscalYear(BaseEntity):
+    """A fiscal/financial year for period-close control (§6.1)."""
+
+    year_name = models.CharField(max_length=50)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    is_closed = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+
+    class Meta(BaseEntity.Meta):
+        db_table = "accounting_fiscal_years"
+        verbose_name = "Fiscal Year"
+        verbose_name_plural = "Fiscal Years"
+
+    def __str__(self) -> str:
+        return self.year_name
+
+
+class AccountingPeriod(BaseEntity):
+    """A sub-period of a FiscalYear (e.g. a month or quarter)."""
+
+    fiscal_year = models.ForeignKey(FiscalYear, on_delete=models.PROTECT, related_name="periods")
+    period_name = models.CharField(max_length=50)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    is_closed = models.BooleanField(default=False)
+
+    class Meta(BaseEntity.Meta):
+        db_table = "accounting_periods"
+        verbose_name = "Accounting Period"
+        verbose_name_plural = "Accounting Periods"
+
+    def __str__(self) -> str:
+        return f"{self.fiscal_year} / {self.period_name}"
+
+
+class TaxRule(BaseEntity):
+    """A tax rate / rule applicable to transactions (§6.1 Tax engine)."""
+
+    class TaxType(models.TextChoices):
+        VAT = "vat", "VAT"
+        GST = "gst", "GST"
+        SALES_TAX = "sales_tax", "Sales Tax"
+        WITHHOLDING = "withholding", "Withholding Tax"
+        OTHER = "other", "Other"
+
+    tax_name = models.CharField(max_length=100)
+    tax_type = models.CharField(max_length=20, choices=TaxType.choices)
+    rate = models.DecimalField(max_digits=5, decimal_places=4, help_text="e.g. 0.1000 for 10%")
+    jurisdiction = models.CharField(max_length=100, blank=True)
+    account = models.ForeignKey(
+        ChartOfAccount, null=True, blank=True, on_delete=models.SET_NULL,
+        related_name="tax_rules",
+    )
+    is_active = models.BooleanField(default=True)
+    description = models.TextField(blank=True)
+
+    class Meta(BaseEntity.Meta):
+        db_table = "accounting_tax_rules"
+        verbose_name = "Tax Rule"
+        verbose_name_plural = "Tax Rules"
+
+    def __str__(self) -> str:
+        return f"{self.tax_name} ({self.rate * 100:.2f}%)"
+
+
+class PaymentAllocation(BaseEntity):
+    """Links a Payment to a specific SalesInvoice or PurchaseBill (§6.1 AR/AP)."""
+
+    class InvoiceType(models.TextChoices):
+        SALES_INVOICE = "SalesInvoice", "Sales Invoice"
+        PURCHASE_BILL = "PurchaseBill", "Purchase Bill"
+
+    payment = models.ForeignKey(Payment, on_delete=models.CASCADE, related_name="allocations")
+    invoice_type = models.CharField(max_length=20, choices=InvoiceType.choices)
+    invoice_id = models.UUIDField(db_index=True)
+    allocated_amount = models.DecimalField(max_digits=19, decimal_places=4)
+    currency = models.CharField(max_length=3, default="USD")
+    allocation_date = models.DateField()
+
+    class Meta(BaseEntity.Meta):
+        db_table = "accounting_payment_allocations"
+        verbose_name = "Payment Allocation"
+        verbose_name_plural = "Payment Allocations"
+
+    def __str__(self) -> str:
+        return f"{self.payment_id} → {self.invoice_type}/{self.invoice_id} {self.allocated_amount}"
+
+
+class Budget(BaseEntity):
+    """A budget plan for a fiscal year / cost centre (§6.1 Budgeting)."""
+
+    class Status(models.TextChoices):
+        DRAFT = "Draft", "Draft"
+        APPROVED = "Approved", "Approved"
+        ACTIVE = "Active", "Active"
+        CLOSED = "Closed", "Closed"
+
+    budget_name = models.CharField(max_length=255)
+    fiscal_year = models.ForeignKey(
+        FiscalYear, null=True, blank=True, on_delete=models.SET_NULL, related_name="budgets"
+    )
+    cost_center = models.ForeignKey(
+        CostCenter, null=True, blank=True, on_delete=models.SET_NULL, related_name="budgets"
+    )
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.DRAFT)
+    notes = models.TextField(blank=True)
+    total_budgeted = models.DecimalField(max_digits=19, decimal_places=4, default=0)
+
+    class Meta(BaseEntity.Meta):
+        db_table = "accounting_budgets"
+        verbose_name = "Budget"
+        verbose_name_plural = "Budgets"
+
+    def __str__(self) -> str:
+        return self.budget_name
+
+
+class BudgetEntry(BaseEntity):
+    """A single account line in a Budget (quarterly breakdowns)."""
+
+    budget = models.ForeignKey(Budget, on_delete=models.CASCADE, related_name="entries")
+    account = models.ForeignKey(ChartOfAccount, on_delete=models.PROTECT, related_name="budget_entries")
+    q1_amount = models.DecimalField(max_digits=19, decimal_places=4, default=0)
+    q2_amount = models.DecimalField(max_digits=19, decimal_places=4, default=0)
+    q3_amount = models.DecimalField(max_digits=19, decimal_places=4, default=0)
+    q4_amount = models.DecimalField(max_digits=19, decimal_places=4, default=0)
+    notes = models.TextField(blank=True)
+
+    class Meta(BaseEntity.Meta):
+        db_table = "accounting_budget_entries"
+        verbose_name = "Budget Entry"
+        verbose_name_plural = "Budget Entries"
+
+    @property
+    def annual_amount(self):
+        return self.q1_amount + self.q2_amount + self.q3_amount + self.q4_amount
+
+    def __str__(self) -> str:
+        return f"{self.budget} / {self.account}"

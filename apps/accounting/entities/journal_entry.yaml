@@ -1,0 +1,57 @@
+entity: JournalEntry
+app: accounting
+label: Journal Entry
+label_plural: Journal Entries
+description: A double-entry bookkeeping entry; lines must balance (§6.1).
+is_submittable: true
+track_changes: true
+
+fields:
+  - name: entry_type
+    type: select
+    label: Entry Type
+    options: [journal, opening, depreciation, bank_reconciliation, inter_company, reversal]
+    default: journal
+    required: true
+
+  - name: posting_date
+    type: date
+    label: Posting Date
+    required: true
+
+  - name: reference
+    type: string
+    label: Reference
+
+  - name: narration
+    type: text
+    label: Narration
+
+  - name: total_debit
+    type: currency
+    label: Total Debit
+    default: 0
+    read_only: true
+
+  - name: total_credit
+    type: currency
+    label: Total Credit
+    default: 0
+    read_only: true
+
+workflow:
+  states: [Draft, Submitted, Cancelled]
+  transitions:
+    - from: Draft
+      to: Submitted
+      action: accounting.hooks.journal_entry.submit_journal_entry
+    - from: Submitted
+      to: Cancelled
+      action: reverse
+
+permissions:
+  - role: Accountant
+    read: true
+    write: true
+    submit: true
+    cancel: true

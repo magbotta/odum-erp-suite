@@ -1,0 +1,52 @@
+entity: BankTransaction
+app: accounting
+label: Bank Transaction
+label_plural: Bank Transactions
+description: A single transaction on an imported bank account statement (§6.1 Banking).
+
+fields:
+  - name: transaction_date
+    type: date
+    label: Transaction Date
+    required: true
+
+  - name: description
+    type: string
+    label: Description
+    required: true
+
+  - name: debit_amount
+    type: currency
+    label: Debit Amount
+    default: 0
+
+  - name: credit_amount
+    type: currency
+    label: Credit Amount
+    default: 0
+
+  - name: running_balance
+    type: currency
+    label: Running Balance
+    default: 0
+
+  - name: reference
+    type: string
+    label: Reference
+
+  - name: transaction_type
+    type: select
+    label: Transaction Type
+    options: [debit, credit]
+    required: true
+
+  - name: is_reconciled
+    type: boolean
+    label: Is Reconciled
+    default: false
+    read_only: true
+
+permissions:
+  - role: Accountant
+    read: true
+    write: true

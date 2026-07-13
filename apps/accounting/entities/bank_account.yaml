@@ -1,0 +1,49 @@
+entity: BankAccount
+app: accounting
+label: Bank Account
+label_plural: Bank Accounts
+description: A company bank account used for statement import and reconciliation (§6.1).
+
+fields:
+  - name: account_name
+    type: string
+    label: Account Name
+    required: true
+
+  - name: bank_name
+    type: string
+    label: Bank Name
+    required: true
+
+  - name: account_number
+    type: string
+    label: Account Number (masked)
+
+  - name: iban
+    type: string
+    label: IBAN
+
+  - name: swift_bic
+    type: string
+    label: SWIFT / BIC
+
+  - name: currency
+    type: string
+    label: Currency
+    default: USD
+
+  - name: bank_account_type
+    type: select
+    label: Account Type
+    options: [savings, current, overdraft]
+    default: current
+
+  - name: is_active
+    type: boolean
+    label: Is Active
+    default: true
+
+permissions:
+  - role: Accountant
+    read: true
+    write: true

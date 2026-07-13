@@ -1,0 +1,36 @@
+entity: FiscalYear
+app: accounting
+label: Fiscal Year
+label_plural: Fiscal Years
+description: A fiscal/financial year used for period-close control (§6.1).
+
+fields:
+  - name: year_name
+    type: string
+    label: Year Name
+    required: true
+
+  - name: start_date
+    type: date
+    label: Start Date
+    required: true
+
+  - name: end_date
+    type: date
+    label: End Date
+    required: true
+
+  - name: is_closed
+    type: boolean
+    label: Is Closed
+    default: false
+
+  - name: is_active
+    type: boolean
+    label: Is Active
+    default: true
+
+permissions:
+  - role: Accountant
+    read: true
+    write: true

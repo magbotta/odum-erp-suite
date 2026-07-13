@@ -1,0 +1,77 @@
+entity: PurchaseBill
+app: accounting
+label: Purchase Bill
+label_plural: Purchase Bills
+description: A vendor bill / AP invoice with automatic GL posting on submission (§6.1).
+is_submittable: true
+track_changes: true
+
+fields:
+  - name: bill_number
+    type: string
+    label: Bill Number
+
+  - name: vendor_invoice_number
+    type: string
+    label: Vendor Invoice Number
+
+  - name: posting_date
+    type: date
+    label: Posting Date
+    required: true
+
+  - name: due_date
+    type: date
+    label: Due Date
+
+  - name: currency
+    type: string
+    label: Currency
+    default: USD
+
+  - name: grand_total
+    type: currency
+    label: Grand Total
+    default: 0
+
+  - name: outstanding_amount
+    type: currency
+    label: Outstanding Amount
+    default: 0
+    read_only: true
+
+  - name: notes
+    type: text
+    label: Notes
+
+workflow:
+  states: [Draft, Submitted, Paid, Partially Paid, Overdue, Cancelled]
+  transitions:
+    - from: Draft
+      to: Submitted
+      action: accounting.hooks.purchase_bill.post_bill_to_gl
+    - from: Submitted
+      to: Paid
+    - from: Submitted
+      to: Partially Paid
+    - from: Submitted
+      to: Overdue
+    - from: Draft
+      to: Cancelled
+    - from: Submitted
+      to: Cancelled
+
+hooks:
+  after_submit:
+    - accounting.hooks.purchase_bill.post_bill_to_gl
+
+permissions:
+  - role: Accountant
+    read: true
+    write: true
+    submit: true
+    cancel: true
+
+  - role: Purchase Manager
+    read: true
+    write: true

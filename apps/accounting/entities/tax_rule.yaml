@@ -1,0 +1,40 @@
+entity: TaxRule
+app: accounting
+label: Tax Rule
+label_plural: Tax Rules
+description: A pluggable per-jurisdiction tax rate applied to transactions (§6.1 Tax engine).
+
+fields:
+  - name: tax_name
+    type: string
+    label: Tax Name
+    required: true
+
+  - name: tax_type
+    type: select
+    label: Tax Type
+    options: [vat, gst, sales_tax, withholding, other]
+    required: true
+
+  - name: rate
+    type: float
+    label: Rate (e.g. 0.1 = 10%)
+    required: true
+
+  - name: jurisdiction
+    type: string
+    label: Jurisdiction
+
+  - name: description
+    type: text
+    label: Description
+
+  - name: is_active
+    type: boolean
+    label: Is Active
+    default: true
+
+permissions:
+  - role: Accountant
+    read: true
+    write: true

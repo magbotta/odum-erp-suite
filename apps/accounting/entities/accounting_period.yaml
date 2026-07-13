@@ -1,0 +1,31 @@
+entity: AccountingPeriod
+app: accounting
+label: Accounting Period
+label_plural: Accounting Periods
+description: A sub-period (month or quarter) within a FiscalYear (§6.1).
+
+fields:
+  - name: period_name
+    type: string
+    label: Period Name
+    required: true
+
+  - name: start_date
+    type: date
+    label: Start Date
+    required: true
+
+  - name: end_date
+    type: date
+    label: End Date
+    required: true
+
+  - name: is_closed
+    type: boolean
+    label: Is Closed
+    default: false
+
+permissions:
+  - role: Accountant
+    read: true
+    write: true

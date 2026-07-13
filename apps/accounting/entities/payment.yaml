@@ -1,0 +1,63 @@
+entity: Payment
+app: accounting
+label: Payment
+label_plural: Payments
+description: A customer receipt or vendor payment with GL posting (§6.1, §11).
+is_submittable: true
+track_changes: true
+
+fields:
+  - name: payment_type
+    type: select
+    label: Payment Type
+    options: [receive, pay, internal_transfer]
+    required: true
+
+  - name: party_type
+    type: select
+    label: Party Type
+    options: [customer, vendor]
+    required: true
+
+  - name: payment_date
+    type: date
+    label: Payment Date
+    required: true
+
+  - name: amount
+    type: currency
+    label: Amount
+    required: true
+
+  - name: currency
+    type: string
+    label: Currency
+    default: USD
+
+  - name: mode_of_payment
+    type: select
+    label: Mode of Payment
+    options: [cash, bank_transfer, card, mobile_money, cheque, other]
+    default: bank_transfer
+
+  - name: reference_number
+    type: string
+    label: Reference Number
+
+workflow:
+  states: [Pending, Processed, Failed, Cancelled]
+  transitions:
+    - from: Pending
+      to: Processed
+      action: accounting.hooks.payment.post_payment_to_gl
+    - from: Pending
+      to: Cancelled
+    - from: Processed
+      to: Cancelled
+
+permissions:
+  - role: Accountant
+    read: true
+    write: true
+    submit: true
+    cancel: true

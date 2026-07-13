@@ -1,0 +1,48 @@
+entity: Budget
+app: accounting
+label: Budget
+label_plural: Budgets
+description: A budget plan for a fiscal year and cost centre (§6.1 Budgeting & forecasting).
+is_submittable: true
+track_changes: true
+
+fields:
+  - name: budget_name
+    type: string
+    label: Budget Name
+    required: true
+
+  - name: status
+    type: select
+    label: Status
+    options: [Draft, Approved, Active, Closed]
+    default: Draft
+
+  - name: notes
+    type: text
+    label: Notes
+
+  - name: total_budgeted
+    type: currency
+    label: Total Budgeted
+    default: 0
+    read_only: true
+
+workflow:
+  states: [Draft, Approved, Active, Closed]
+  transitions:
+    - from: Draft
+      to: Approved
+    - from: Approved
+      to: Active
+    - from: Active
+      to: Closed
+    - from: Draft
+      to: Closed
+
+permissions:
+  - role: Accountant
+    read: true
+    write: true
+    submit: true
+    cancel: true
