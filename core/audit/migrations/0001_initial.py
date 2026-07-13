@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("ochre_auth", "0001_initial"),
+        ("odum_auth", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
@@ -31,11 +31,11 @@ class Migration(migrations.Migration):
                 ("user", models.ForeignKey(db_index=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name="audit_logs", to=settings.AUTH_USER_MODEL)),
             ],
             options={
-                "db_table": "ochre_audit_log",
+                "db_table": "odum_audit_log",
                 "ordering": ["-timestamp"],
                 "indexes": [
-                    models.Index(fields=["entity", "entity_id"], name="ochre_audit_entity_idx"),
-                    models.Index(fields=["user", "timestamp"], name="ochre_audit_user_ts_idx"),
+                    models.Index(fields=["entity", "entity_id"], name="odum_audit_entity_idx"),
+                    models.Index(fields=["user", "timestamp"], name="odum_audit_user_ts_idx"),
                 ],
             },
         ),

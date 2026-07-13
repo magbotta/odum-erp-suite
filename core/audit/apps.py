@@ -1,7 +1,7 @@
 from django.apps import AppConfig
 
 
-class OchreAuditConfig(AppConfig):
+class OdumAuditConfig(AppConfig):
     name = "core.audit"
-    label = "ochre_audit"
+    label = "odum_audit"
     verbose_name = "Odum Audit"

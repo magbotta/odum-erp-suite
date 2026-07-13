@@ -9,7 +9,7 @@ import yaml
 from .definitions import EntityDefinition
 from .registry import registry
 
-logger = logging.getLogger("ochre.metadata_engine")
+logger = logging.getLogger("odum.metadata_engine")
 
 
 def load_entity_file(path: Path) -> EntityDefinition | None:

@@ -9,7 +9,7 @@ interface Props {
 
 export default function FieldRenderer({ field, value, onChange, readOnly }: Props) {
   const base =
-    'w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ochre-500 focus:border-transparent disabled:bg-gray-50 disabled:text-gray-500';
+    'w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-odum-500 focus:border-transparent disabled:bg-gray-50 disabled:text-gray-500';
   const disabled = readOnly || field.read_only;
   const strVal = value == null ? '' : String(value);
 
@@ -20,7 +20,7 @@ export default function FieldRenderer({ field, value, onChange, readOnly }: Prop
         checked={Boolean(value)}
         disabled={disabled}
         onChange={e => onChange?.(e.target.checked)}
-        className="h-4 w-4 rounded border-gray-300 text-ochre-600 focus:ring-ochre-500"
+        className="h-4 w-4 rounded border-gray-300 text-odum-600 focus:ring-odum-500"
       />
     );
   }

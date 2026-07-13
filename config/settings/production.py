@@ -29,6 +29,6 @@ LOGGING = {
     },
     "root": {"handlers": ["console"], "level": "WARNING"},
     "loggers": {
-        "ochre": {"handlers": ["console"], "level": "INFO", "propagate": False},
+        "odum": {"handlers": ["console"], "level": "INFO", "propagate": False},
     },
 }

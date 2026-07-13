@@ -44,8 +44,8 @@ class AuditLog(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
 
     class Meta:
-        app_label = "ochre_audit"
-        db_table = "ochre_audit_log"
+        app_label = "odum_audit"
+        db_table = "odum_audit_log"
         ordering = ["-timestamp"]
         indexes = [
             models.Index(fields=["entity", "entity_id"]),

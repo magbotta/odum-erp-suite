@@ -89,7 +89,7 @@ export default function DetailView({ meta, recordId }: Props) {
             <p className="text-xs text-slate-400 mt-0.5 font-mono">{recordId}</p>
           </div>
           {record.status != null && (
-            <span className="ml-2 inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-ochre-100 text-ochre-800 border border-ochre-200">
+            <span className="ml-2 inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-odum-100 text-odum-800 border border-odum-200">
               {String(record.status)}
             </span>
           )}
@@ -140,7 +140,7 @@ export default function DetailView({ meta, recordId }: Props) {
                 key={state}
                 className={`text-xs rounded-full px-3 py-1 border ${
                   record.status === state
-                    ? 'bg-ochre-500 text-white border-ochre-500 font-semibold'
+                    ? 'bg-odum-500 text-white border-odum-500 font-semibold'
                     : 'bg-gray-50 text-slate-500 border-gray-200'
                 }`}
               >
@@ -156,11 +156,11 @@ export default function DetailView({ meta, recordId }: Props) {
                   key={t.action}
                   disabled={actionLoading}
                   onClick={() => t.action && handleAction(t.action, t.to)}
-                  className="flex items-center gap-1.5 text-xs font-semibold border border-ochre-300 text-ochre-700 bg-ochre-50 hover:bg-ochre-100 px-3 py-1.5 rounded-lg transition disabled:opacity-50"
+                  className="flex items-center gap-1.5 text-xs font-semibold border border-odum-300 text-odum-700 bg-odum-50 hover:bg-odum-100 px-3 py-1.5 rounded-lg transition disabled:opacity-50"
                 >
                   {t.action}
                   <ChevronRight size={12} />
-                  <span className="font-normal text-ochre-500">{t.to}</span>
+                  <span className="font-normal text-odum-500">{t.to}</span>
                 </button>
               ))}
             </div>

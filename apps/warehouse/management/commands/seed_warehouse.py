@@ -50,7 +50,7 @@ ITEM_CATEGORIES = [
 # (code, name, category, uom, selling, buying, valuation, has_serial, has_batch, barcode)
 ITEMS = [
     # Software (non-stock, service)
-    ("SW-ERP-LIC",   "Ochre ERP Annual License (1 user)",   "Software Licenses", "MO",    199.00,  0.00,  "standard", False, False, ""),
+    ("SW-ERP-LIC",   "Odum ERP Annual License (1 user)",   "Software Licenses", "MO",    199.00,  0.00,  "standard", False, False, ""),
     ("SW-SUPP-LIC",  "Support & Maintenance License",        "Software Licenses", "MO",     49.00,  0.00,  "standard", False, False, ""),
     ("SW-STOR-1TB",  "Cloud Storage Add-on (1 TB/yr)",       "Software Licenses", "MO",     20.00,  0.00,  "standard", False, False, ""),
     # Hardware — serialised

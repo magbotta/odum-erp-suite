@@ -182,7 +182,7 @@ export default function FormView({ meta, initialData, recordId }: Props) {
           <button
             type="submit"
             disabled={mutation.isPending}
-            className="flex items-center gap-2 px-4 py-2 bg-ochre-600 hover:bg-ochre-700 text-white text-sm font-semibold rounded-lg transition disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 bg-odum-600 hover:bg-odum-700 text-white text-sm font-semibold rounded-lg transition disabled:opacity-50"
           >
             <Save size={14} />
             {mutation.isPending ? 'Saving…' : isEdit ? 'Save changes' : 'Create'}

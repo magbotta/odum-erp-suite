@@ -6,19 +6,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ochre_audit', '0001_initial'),
+        ('odum_audit', '0001_initial'),
     ]
 
     operations = [
         migrations.RenameIndex(
             model_name='auditlog',
-            new_name='ochre_audit_entity_7da4d5_idx',
-            old_name='ochre_audit_entity_idx',
+            new_name='odum_audit_entity_7da4d5_idx',
+            old_name='odum_audit_entity_idx',
         ),
         migrations.RenameIndex(
             model_name='auditlog',
-            new_name='ochre_audit_user_id_74ae89_idx',
-            old_name='ochre_audit_user_ts_idx',
+            new_name='odum_audit_user_id_74ae89_idx',
+            old_name='odum_audit_user_ts_idx',
         ),
         migrations.AlterField(
             model_name='auditlog',

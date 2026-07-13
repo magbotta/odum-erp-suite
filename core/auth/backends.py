@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.auth.backends import BaseBackend
 from django.http import HttpRequest
 
-from .models import APIKey, OchreUser
+from .models import APIKey, OdumUser
 
 
 class JWTBackend(BaseBackend):
@@ -26,14 +26,14 @@ class JWTBackend(BaseBackend):
             return None
 
         try:
-            return OchreUser.objects.get(pk=payload["sub"], is_active=True)
-        except OchreUser.DoesNotExist:
+            return OdumUser.objects.get(pk=payload["sub"], is_active=True)
+        except OdumUser.DoesNotExist:
             return None
 
     def get_user(self, user_id):
         try:
-            return OchreUser.objects.get(pk=user_id)
-        except OchreUser.DoesNotExist:
+            return OdumUser.objects.get(pk=user_id)
+        except OdumUser.DoesNotExist:
             return None
 
 
@@ -50,6 +50,6 @@ class APIKeyBackend(BaseBackend):
 
     def get_user(self, user_id):
         try:
-            return OchreUser.objects.get(pk=user_id)
-        except OchreUser.DoesNotExist:
+            return OdumUser.objects.get(pk=user_id)
+        except OdumUser.DoesNotExist:
             return None

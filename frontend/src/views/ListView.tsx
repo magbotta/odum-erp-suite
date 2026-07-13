@@ -98,7 +98,7 @@ export default function ListView({ meta }: Props) {
           </button>
           <Link
             to={`/entities/${meta.app}/${meta.entity}/new`}
-            className="flex items-center gap-1.5 bg-ochre-600 hover:bg-ochre-700 text-white text-sm font-medium rounded-lg px-3 py-1.5 transition"
+            className="flex items-center gap-1.5 bg-odum-600 hover:bg-odum-700 text-white text-sm font-medium rounded-lg px-3 py-1.5 transition"
           >
             <Plus size={14} />
             New {meta.label}
@@ -114,7 +114,7 @@ export default function ListView({ meta }: Props) {
           placeholder={`Search ${meta.label_plural.toLowerCase()}…`}
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
-          className="w-full max-w-sm pl-8 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-ochre-500 focus:border-transparent bg-white"
+          className="w-full max-w-sm pl-8 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-odum-500 focus:border-transparent bg-white"
         />
       </div>
 
@@ -141,7 +141,7 @@ export default function ListView({ meta }: Props) {
             {!isFiltered && (
               <Link
                 to={`/entities/${meta.app}/${meta.entity}/new`}
-                className="mt-3 inline-block text-ochre-600 hover:text-ochre-700 text-sm font-medium"
+                className="mt-3 inline-block text-odum-600 hover:text-odum-700 text-sm font-medium"
               >
                 Create the first {meta.label}
               </Link>
@@ -162,9 +162,9 @@ export default function ListView({ meta }: Props) {
                         {f.label}
                         {sortField === f.name ? (
                           sortDir === 'asc' ? (
-                            <ChevronUp size={12} className="text-ochre-600" />
+                            <ChevronUp size={12} className="text-odum-600" />
                           ) : (
-                            <ChevronDown size={12} className="text-ochre-600" />
+                            <ChevronDown size={12} className="text-odum-600" />
                           )
                         ) : (
                           <ChevronUp size={12} className="opacity-0 group-hover:opacity-30" />
@@ -187,7 +187,7 @@ export default function ListView({ meta }: Props) {
                   <tr
                     key={String(row.id)}
                     onClick={() => nav(`/entities/${meta.app}/${meta.entity}/${row.id}`)}
-                    className="hover:bg-ochre-50 cursor-pointer transition"
+                    className="hover:bg-odum-50 cursor-pointer transition"
                   >
                     {visibleFields.map(f => (
                       <td key={f.name} className="px-4 py-3 text-slate-700">

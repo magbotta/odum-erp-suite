@@ -44,7 +44,7 @@ export default function ProfilePage() {
   }
 
   const inputBase =
-    'w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ochre-500 focus:border-transparent';
+    'w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-odum-500 focus:border-transparent';
 
   return (
     <div className="max-w-lg">
@@ -53,8 +53,8 @@ export default function ProfilePage() {
       {/* Profile info */}
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
         <div className="flex items-center gap-4 mb-5">
-          <div className="h-12 w-12 rounded-full bg-ochre-100 flex items-center justify-center">
-            <User size={22} className="text-ochre-600" />
+          <div className="h-12 w-12 rounded-full bg-odum-100 flex items-center justify-center">
+            <User size={22} className="text-odum-600" />
           </div>
           <div>
             <div className="font-semibold text-slate-900">
@@ -127,7 +127,7 @@ export default function ProfilePage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center gap-2 bg-ochre-600 hover:bg-ochre-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition disabled:opacity-50"
+              className="flex items-center gap-2 bg-odum-600 hover:bg-odum-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition disabled:opacity-50"
             >
               <Save size={14} />
               {loading ? 'Saving…' : 'Update password'}

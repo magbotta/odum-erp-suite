@@ -4,13 +4,13 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import TYPE_CHECKING
 
-from .models import EntityPermission, OchreUser, UserRole
+from .models import EntityPermission, OdumUser, UserRole
 
 if TYPE_CHECKING:
     from uuid import UUID
 
 
-def get_user_roles(user: OchreUser, company_id: "UUID | None" = None) -> list[str]:
+def get_user_roles(user: OdumUser, company_id: "UUID | None" = None) -> list[str]:
     """Return role names for a user, optionally filtered by company."""
     qs = UserRole.objects.filter(user=user).select_related("role")
     if company_id:
@@ -19,7 +19,7 @@ def get_user_roles(user: OchreUser, company_id: "UUID | None" = None) -> list[st
 
 
 def has_entity_permission(
-    user: OchreUser,
+    user: OdumUser,
     entity: str,
     action: str,
     company_id: "UUID | None" = None,
@@ -43,7 +43,7 @@ def has_entity_permission(
     ).exists()
 
 
-def get_row_filters(user: OchreUser, entity: str, company_id: "UUID | None" = None) -> list[dict]:
+def get_row_filters(user: OdumUser, entity: str, company_id: "UUID | None" = None) -> list[dict]:
     """Return all row_filter JSON objects applicable to this user/entity combo."""
     if user.is_superuser:
         return []

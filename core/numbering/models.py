@@ -20,7 +20,7 @@ class NumberSeries(models.Model):
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        db_table = "ochre_number_series"
+        db_table = "odum_number_series"
         unique_together = [("name", "company_id")]
         verbose_name = "Number Series"
         verbose_name_plural = "Number Series"

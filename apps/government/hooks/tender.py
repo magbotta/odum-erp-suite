@@ -10,7 +10,7 @@ def set_tender_number(tender: Tender) -> None:
     if not tender.tender_number:
         tender.tender_number = get_next_number("TEND", company_id=tender.company_id)
     if not tender.ocds_ocid:
-        tender.ocds_ocid = f"ocds-ochre-{tender.company_id}-{tender.tender_number}"
+        tender.ocds_ocid = f"ocds-odum-{tender.company_id}-{tender.tender_number}"
 
 
 def publish_tender(tender: Tender) -> None:

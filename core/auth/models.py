@@ -11,8 +11,8 @@ from django.db import models
 from django.utils import timezone
 
 
-class OchreUserManager(BaseUserManager["OchreUser"]):
-    def create_user(self, email: str, password: str | None = None, **extra_fields) -> "OchreUser":
+class OdumUserManager(BaseUserManager["OdumUser"]):
+    def create_user(self, email: str, password: str | None = None, **extra_fields) -> "OdumUser":
         if not email:
             raise ValueError("Email is required")
         email = self.normalize_email(email)
@@ -21,13 +21,13 @@ class OchreUserManager(BaseUserManager["OchreUser"]):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email: str, password: str | None = None, **extra_fields) -> "OchreUser":
+    def create_superuser(self, email: str, password: str | None = None, **extra_fields) -> "OdumUser":
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         return self.create_user(email, password, **extra_fields)
 
 
-class OchreUser(AbstractBaseUser, PermissionsMixin):
+class OdumUser(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(unique=True, db_index=True)
     first_name = models.CharField(max_length=150, blank=True)
@@ -39,11 +39,11 @@ class OchreUser(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
-    objects = OchreUserManager()
+    objects = OdumUserManager()
 
     class Meta:
-        app_label = "ochre_auth"
-        db_table = "ochre_users"
+        app_label = "odum_auth"
+        db_table = "odum_users"
         verbose_name = "User"
         verbose_name_plural = "Users"
 
@@ -69,8 +69,8 @@ class Company(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        app_label = "ochre_auth"
-        db_table = "ochre_companies"
+        app_label = "odum_auth"
+        db_table = "odum_companies"
         verbose_name = "Company"
         verbose_name_plural = "Companies"
 
@@ -90,8 +90,8 @@ class Role(models.Model):
     is_system = models.BooleanField(default=False, help_text="System roles cannot be deleted")
 
     class Meta:
-        app_label = "ochre_auth"
-        db_table = "ochre_roles"
+        app_label = "odum_auth"
+        db_table = "odum_roles"
         unique_together = [("name", "company")]
 
     def __str__(self) -> str:
@@ -102,17 +102,17 @@ class Role(models.Model):
 
 class UserRole(models.Model):
     """Many-to-many between users and roles, scoped to a company."""
-    user = models.ForeignKey(OchreUser, on_delete=models.CASCADE, related_name="user_roles")
+    user = models.ForeignKey(OdumUser, on_delete=models.CASCADE, related_name="user_roles")
     role = models.ForeignKey(Role, on_delete=models.CASCADE, related_name="user_roles")
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="user_roles")
     granted_at = models.DateTimeField(auto_now_add=True)
     granted_by = models.ForeignKey(
-        OchreUser, null=True, on_delete=models.SET_NULL, related_name="grants_given"
+        OdumUser, null=True, on_delete=models.SET_NULL, related_name="grants_given"
     )
 
     class Meta:
-        app_label = "ochre_auth"
-        db_table = "ochre_user_roles"
+        app_label = "odum_auth"
+        db_table = "odum_user_roles"
         unique_together = [("user", "role", "company")]
 
 
@@ -133,8 +133,8 @@ class EntityPermission(models.Model):
     )
 
     class Meta:
-        app_label = "ochre_auth"
-        db_table = "ochre_entity_permissions"
+        app_label = "odum_auth"
+        db_table = "odum_entity_permissions"
         unique_together = [("role", "entity")]
 
     def __str__(self) -> str:
@@ -144,7 +144,7 @@ class EntityPermission(models.Model):
 class APIKey(models.Model):
     """Long-lived API key for service accounts and n8n/webhook integrations."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(OchreUser, on_delete=models.CASCADE, related_name="api_keys")
+    user = models.ForeignKey(OdumUser, on_delete=models.CASCADE, related_name="api_keys")
     name = models.CharField(max_length=100)
     key_hash = models.CharField(max_length=64, unique=True, editable=False)
     prefix = models.CharField(max_length=8, editable=False)
@@ -157,14 +157,14 @@ class APIKey(models.Model):
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        app_label = "ochre_auth"
-        db_table = "ochre_api_keys"
+        app_label = "odum_auth"
+        db_table = "odum_api_keys"
 
     def __str__(self) -> str:
         return f"{self.name} ({self.prefix}…)"
 
     @classmethod
-    def generate(cls, user: OchreUser, name: str, **kwargs) -> tuple["APIKey", str]:
+    def generate(cls, user: OdumUser, name: str, **kwargs) -> tuple["APIKey", str]:
         """Create a new API key. Returns (instance, raw_key). Raw key is only shown once."""
         raw = secrets.token_urlsafe(32)
         prefix = raw[:8]

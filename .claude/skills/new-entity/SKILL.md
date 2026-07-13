@@ -1,6 +1,6 @@
 ---
 name: new-entity
-description: Author a new Entity Definition for Odum ERP Suite's metadata-driven engine (fields, permissions, workflow, hooks). Use this whenever the user asks to add, define, or model a new business object — an Invoice, Employee, Purchase Order, Student, Patient, Work Order, or any other entity — within an existing Ochre App, or asks how entities/DocTypes work in this codebase. Also use it when the user is about to hand-write a CRUD endpoint, serializer, or permission check for a new model — the whole point of the metadata engine is that they shouldn't have to. Grounded in CLAUDE.md §5 and §12.
+description: Author a new Entity Definition for Odum ERP Suite's metadata-driven engine (fields, permissions, workflow, hooks). Use this whenever the user asks to add, define, or model a new business object — an Invoice, Employee, Purchase Order, Student, Patient, Work Order, or any other entity — within an existing Odum App, or asks how entities/DocTypes work in this codebase. Also use it when the user is about to hand-write a CRUD endpoint, serializer, or permission check for a new model — the whole point of the metadata engine is that they shouldn't have to. Grounded in CLAUDE.md §5 and §12.
 ---
 
 # Authoring a new Entity Definition

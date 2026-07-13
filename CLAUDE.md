@@ -1,4 +1,4 @@
-# Ochre ERP — Open-Source ERP Platform: Architecture & Design Document
+# Odum ERP Suite — Open-Source ERP Platform: Architecture & Design Document
 
 *Designed to compete with Odoo, ERPNext, and Salesforce as a fully self-hosted, open-source system.*
 
@@ -8,9 +8,9 @@
 
 ## 1. Executive Summary & Positioning
 
-Odoo and ERPNext win on breadth (dozens of pre-integrated modules) and a metadata-driven development model that lets a small core team and a large community ship modules fast. Salesforce wins on CRM depth, a mature platform (Apex/Lightning) for enterprise customization, and ecosystem/marketplace gravity. Ochre ERP's wedge is: **match the module breadth of ERPNext/Odoo, keep Salesforce-grade extensibility patterns (a real platform, not just an app), and stay pure open source with no license traps** (Odoo Enterprise gates key modules behind a proprietary license; ERPNext is more permissively licensed but its cloud arm is the main sustainability engine).
+Odoo and ERPNext win on breadth (dozens of pre-integrated modules) and a metadata-driven development model that lets a small core team and a large community ship modules fast. Salesforce wins on CRM depth, a mature platform (Apex/Lightning) for enterprise customization, and ecosystem/marketplace gravity. Odum ERP's wedge is: **match the module breadth of ERPNext/Odoo, keep Salesforce-grade extensibility patterns (a real platform, not just an app), and stay pure open source with no license traps** (Odoo Enterprise gates key modules behind a proprietary license; ERPNext is more permissively licensed but its cloud arm is the main sustainability engine).
 
-| Dimension | Odoo | ERPNext (Frappe) | Salesforce | Ochre ERP (proposed) |
+| Dimension | Odoo | ERPNext (Frappe) | Salesforce | Odum ERP (proposed) |
 |---|---|---|---|---|
 | License | LGPL core / proprietary Enterprise modules | GPLv3, fully open | Proprietary SaaS | Fully open source (license choice discussed in §16) |
 | Architecture | Monolith, addon-based | Monolith (Frappe framework), app-based | Multi-tenant proprietary platform | Modular monolith + pluggable apps |
@@ -25,8 +25,8 @@ The rest of this document designs the platform to deliver on that positioning.
 
 ## 2. Architecture Principles
 
-1. **Modular monolith, not microservices.** One deployable application, one team can run it, one database cluster to operate — but internally organized into strictly bounded modules with owned tables, no cross-module raw SQL joins, and all cross-module interaction through internal service interfaces or domain events. This gets Ochre ERP to feature parity fast without the operational tax microservices would impose on self-hosting users (most self-hosters do **not** want to run 15 Kubernetes services to run payroll for 40 employees).
-2. **Metadata-driven core.** The single biggest reason ERPNext/Frappe can move fast with a small team is that most modules are *defined*, not hand-coded: a "DocType"-style entity definition (fields, validation, permissions, workflow states) auto-generates the database schema, REST/GraphQL API, list/detail UI, and permission checks. Ochre ERP adopts this pattern as its core innovation, described in §5.
+1. **Modular monolith, not microservices.** One deployable application, one team can run it, one database cluster to operate — but internally organized into strictly bounded modules with owned tables, no cross-module raw SQL joins, and all cross-module interaction through internal service interfaces or domain events. This gets Odum ERP to feature parity fast without the operational tax microservices would impose on self-hosting users (most self-hosters do **not** want to run 15 Kubernetes services to run payroll for 40 employees).
+2. **Metadata-driven core.** The single biggest reason ERPNext/Frappe can move fast with a small team is that most modules are *defined*, not hand-coded: a "DocType"-style entity definition (fields, validation, permissions, workflow states) auto-generates the database schema, REST/GraphQL API, list/detail UI, and permission checks. Odum ERP adopts this pattern as its core innovation, described in §5.
 3. **Everything is an App.** Core modules and industry modules both compile down to "Apps" — a package of entity definitions, business logic hooks, UI extensions, and migrations that installs into the running platform. Core modules are just Apps that ship by default. This is what lets industry modules (Manufacturing, POS, Education, Healthcare, Agriculture, Nonprofit, Telecom, Government) be built and maintained independently, by different teams, without forking core. The "no cross-App raw SQL, no reaching into another App's tables" rule is not just a convention — it's mechanically enforced in CI via import-linter-style contracts that fail the build if an App's code imports another App's models directly instead of going through its public service interface or the event bus, plus a migration-time check that blocks a migration from touching a table outside the App that owns it. Community-contributed Apps are additionally subject to the certification review described in §17.
 4. **Multi-company and multi-currency from the start.** ERPs get retrofitted for this badly if it's an afterthought (real pain point in early Odoo/ERPNext history). Every transactional table carries `company_id` and every monetary field carries currency + exchange-rate-at-transaction-time.
 5. **API-first.** Every entity defined through the metadata engine automatically gets a versioned REST endpoint. The web UI is just the first API consumer, not a special case — this is what makes the Website module, mobile apps, and third-party integration/automation tooling (n8n is a first-class citizen, §9) straightforward rather than bolted on.
@@ -71,7 +71,7 @@ flowchart TB
         EXT[n8n / Zapier-style automation, 3rd-party integrations, partner apps]
     end
 
-    subgraph Platform["Ochre ERP Platform (single deployable, modular monolith)"]
+    subgraph Platform["Odum ERP Platform (single deployable, modular monolith)"]
         GATEWAY[API Gateway layer: Django Ninja REST + Webhooks + GraphQL for reporting]
         AUTHZ[Auth & Permission Engine: RBAC + row-level + SSO/OIDC/SAML]
         META[Metadata / Entity Engine: DocType-style definitions -> schema, API, UI, workflow]

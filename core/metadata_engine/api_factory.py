@@ -11,7 +11,7 @@ from pydantic import create_model, Field
 if TYPE_CHECKING:
     from .definitions import EntityDefinition
 
-logger = logging.getLogger("ochre.metadata_engine.api_factory")
+logger = logging.getLogger("odum.metadata_engine.api_factory")
 
 
 def _obj_to_dict(obj) -> dict:

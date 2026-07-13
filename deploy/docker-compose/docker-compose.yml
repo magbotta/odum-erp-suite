@@ -14,13 +14,13 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ochre
-      POSTGRES_USER: ochre
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ochre}
+      POSTGRES_DB: odum
+      POSTGRES_USER: odum
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-odum}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "ochre"]
+      test: ["CMD", "pg_isready", "-U", "odum"]
       interval: 10s
       timeout: 5s
       retries: 5

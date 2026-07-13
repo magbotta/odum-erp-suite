@@ -13,7 +13,7 @@ export default function DashboardPage() {
 
   const highlights = [
     { label: 'Total Entities', value: entities.length, icon: Database, color: 'bg-blue-50 text-blue-600' },
-    { label: 'Installed Apps', value: appCount, icon: Layers, color: 'bg-ochre-50 text-ochre-600' },
+    { label: 'Installed Apps', value: appCount, icon: Layers, color: 'bg-odum-50 text-odum-600' },
   ];
 
   const quickLinks = [
@@ -58,7 +58,7 @@ export default function DashboardPage() {
           <a
             key={`${link.app}.${link.entity}`}
             href={`/entities/${link.app}/${link.entity}`}
-            className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm hover:border-ochre-300 hover:shadow-md transition flex items-center gap-3"
+            className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm hover:border-odum-300 hover:shadow-md transition flex items-center gap-3"
           >
             <div className="rounded-lg p-2 bg-slate-50">
               <link.icon size={16} className="text-slate-600" />
@@ -84,7 +84,7 @@ export default function DashboardPage() {
                   <a
                     key={e.entity}
                     href={`/entities/${e.app}/${e.entity}`}
-                    className="text-xs text-ochre-700 hover:underline"
+                    className="text-xs text-odum-700 hover:underline"
                   >
                     {e.label}
                   </a>

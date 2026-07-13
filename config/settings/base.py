@@ -16,12 +16,12 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.messages",
     # core — auth must come first (AUTH_USER_MODEL)
-    "core.auth.apps.OchreAuthConfig",
+    "core.auth.apps.OdumAuthConfig",
     # standard django admin (after custom user model)
     "django.contrib.admin",
     "django.contrib.sessions",
     # core — platform
-    "core.audit.apps.OchreAuditConfig",
+    "core.audit.apps.OdumAuditConfig",
     # Phase 1 business apps — must be before MetadataEngineConfig so their
     # entity_dir is discovered during MetadataEngineConfig.ready()
     "apps.crm.apps.CRMConfig",
@@ -96,7 +96,7 @@ ASGI_APPLICATION = "config.asgi.application"
 DATABASES = {
     "default": dj_database_url.config(
         env="DATABASE_URL",
-        default="postgres://ochre:ochre@localhost:5432/ochre",
+        default="postgres://odum:odum@localhost:5432/odum",
         conn_max_age=60,
         conn_health_checks=True,
     )
@@ -122,7 +122,7 @@ CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_RESULT_EXTENDED = True
 
 # --- Auth ---
-AUTH_USER_MODEL = "ochre_auth.OchreUser"
+AUTH_USER_MODEL = "odum_auth.OdumUser"
 
 AUTHENTICATION_BACKENDS = [
     "core.auth.backends.JWTBackend",
@@ -171,4 +171,4 @@ DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="noreply@odum.local")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # --- Odum ERP Suite-specific ---
-OCHRE_ENTITY_SCAN_DIRS: list[str] = []  # populated by each App's AppConfig
+ODUM_ENTITY_SCAN_DIRS: list[str] = []  # populated by each App's AppConfig

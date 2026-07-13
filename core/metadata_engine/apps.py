@@ -3,7 +3,7 @@ from django.apps import AppConfig
 
 class MetadataEngineConfig(AppConfig):
     name = "core.metadata_engine"
-    label = "ochre_metadata"
+    label = "odum_metadata"
     verbose_name = "Odum Metadata Engine"
 
     def ready(self):
@@ -20,4 +20,4 @@ class MetadataEngineConfig(AppConfig):
                 scan_directory(path)
 
         # 2. Scan any additional dirs from settings
-        scan_entity_dirs(getattr(settings, "OCHRE_ENTITY_SCAN_DIRS", []))
+        scan_entity_dirs(getattr(settings, "ODUM_ENTITY_SCAN_DIRS", []))

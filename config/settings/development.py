@@ -16,6 +16,6 @@ LOGGING = {
     "loggers": {
         "django": {"handlers": ["console"], "level": "INFO", "propagate": False},
         "django.db.backends": {"handlers": ["console"], "level": "WARNING", "propagate": False},
-        "ochre": {"handlers": ["console"], "level": "DEBUG", "propagate": False},
+        "odum": {"handlers": ["console"], "level": "DEBUG", "propagate": False},
     },
 }

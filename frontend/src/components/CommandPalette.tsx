@@ -129,7 +129,7 @@ export default function CommandPalette() {
               onClick={() => select(e)}
               onMouseEnter={() => setActiveIndex(i)}
               className={`flex items-center justify-between px-4 py-2.5 cursor-pointer transition text-sm ${
-                i === activeIndex ? 'bg-ochre-50 text-ochre-700' : 'text-slate-700 hover:bg-gray-50'
+                i === activeIndex ? 'bg-odum-50 text-odum-700' : 'text-slate-700 hover:bg-gray-50'
               }`}
             >
               <span className="font-medium">{e.label_plural}</span>

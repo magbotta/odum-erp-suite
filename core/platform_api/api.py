@@ -12,7 +12,7 @@ api = NinjaAPI(
         "Every entity defined via the metadata engine is available here."
     ),
     auth=AuthBearer(),
-    urls_namespace="ochre_api",
+    urls_namespace="odum_api",
 )
 
 # --- Core routers ---

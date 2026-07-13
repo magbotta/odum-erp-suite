@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name="OchreUser",
+            name="OdumUser",
             fields=[
                 ("id", models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ("password", models.CharField(max_length=128, verbose_name="password")),
@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
                 ("groups", models.ManyToManyField(blank=True, related_name="user_set", related_query_name="user", to="auth.group", verbose_name="groups")),
                 ("user_permissions", models.ManyToManyField(blank=True, related_name="user_set", related_query_name="user", to="auth.permission", verbose_name="user permissions")),
             ],
-            options={"db_table": "ochre_users", "verbose_name": "User", "verbose_name_plural": "Users"},
+            options={"db_table": "odum_users", "verbose_name": "User", "verbose_name_plural": "Users"},
             managers=[("objects", django.contrib.auth.models.UserManager())],
         ),
         migrations.CreateModel(
@@ -44,9 +44,9 @@ class Migration(migrations.Migration):
                 ("country", models.CharField(blank=True, max_length=2)),
                 ("is_active", models.BooleanField(default=True)),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
-                ("parent", models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name="subsidiaries", to="ochre_auth.company")),
+                ("parent", models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name="subsidiaries", to="odum_auth.company")),
             ],
-            options={"db_table": "ochre_companies", "verbose_name": "Company", "verbose_name_plural": "Companies"},
+            options={"db_table": "odum_companies", "verbose_name": "Company", "verbose_name_plural": "Companies"},
         ),
         migrations.CreateModel(
             name="Role",
@@ -55,9 +55,9 @@ class Migration(migrations.Migration):
                 ("name", models.CharField(max_length=100)),
                 ("description", models.TextField(blank=True)),
                 ("is_system", models.BooleanField(default=False)),
-                ("company", models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name="roles", to="ochre_auth.company")),
+                ("company", models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name="roles", to="odum_auth.company")),
             ],
-            options={"db_table": "ochre_roles", "unique_together": {("name", "company")}},
+            options={"db_table": "odum_roles", "unique_together": {("name", "company")}},
         ),
         migrations.CreateModel(
             name="UserRole",
@@ -65,11 +65,11 @@ class Migration(migrations.Migration):
                 ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
                 ("granted_at", models.DateTimeField(auto_now_add=True)),
                 ("user", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="user_roles", to=settings.AUTH_USER_MODEL)),
-                ("role", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="user_roles", to="ochre_auth.role")),
-                ("company", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="user_roles", to="ochre_auth.company")),
+                ("role", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="user_roles", to="odum_auth.role")),
+                ("company", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="user_roles", to="odum_auth.company")),
                 ("granted_by", models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name="grants_given", to=settings.AUTH_USER_MODEL)),
             ],
-            options={"db_table": "ochre_user_roles", "unique_together": {("user", "role", "company")}},
+            options={"db_table": "odum_user_roles", "unique_together": {("user", "role", "company")}},
         ),
         migrations.CreateModel(
             name="EntityPermission",
@@ -82,9 +82,9 @@ class Migration(migrations.Migration):
                 ("can_cancel", models.BooleanField(default=False)),
                 ("can_delete", models.BooleanField(default=False)),
                 ("row_filter", models.JSONField(blank=True, null=True)),
-                ("role", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="entity_permissions", to="ochre_auth.role")),
+                ("role", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="entity_permissions", to="odum_auth.role")),
             ],
-            options={"db_table": "ochre_entity_permissions", "unique_together": {("role", "entity")}},
+            options={"db_table": "odum_entity_permissions", "unique_together": {("role", "entity")}},
         ),
         migrations.CreateModel(
             name="APIKey",
@@ -98,8 +98,8 @@ class Migration(migrations.Migration):
                 ("created_at", models.DateTimeField(auto_now_add=True)),
                 ("is_active", models.BooleanField(default=True)),
                 ("user", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="api_keys", to=settings.AUTH_USER_MODEL)),
-                ("company", models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name="api_keys", to="ochre_auth.company")),
+                ("company", models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name="api_keys", to="odum_auth.company")),
             ],
-            options={"db_table": "ochre_api_keys"},
+            options={"db_table": "odum_api_keys"},
         ),
     ]

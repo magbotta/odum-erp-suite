@@ -243,7 +243,7 @@ class Command(BaseCommand):
                 defaults={
                     "first_name": first,
                     "last_name": last,
-                    "email": f"{first.lower()}.{last.lower().replace(' ', '').replace(chr(39), '')}@ochre-erp.io",
+                    "email": f"{first.lower()}.{last.lower().replace(' ', '').replace(chr(39), '')}@odum-erp.io",
                     "department": dept_objs[dept_idx],
                     "designation": designation,
                     "employment_type": emp_type,

@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib.auth import authenticate
 from ninja import Router
 
-from .models import APIKey, OchreUser
+from .models import APIKey, OdumUser
 from .schemas import (
     APIKeyCreateIn,
     APIKeyCreatedOut,
@@ -24,7 +24,7 @@ from core.platform_api.security import AuthBearer
 router = Router(tags=["auth"])
 
 
-def _make_tokens(user: OchreUser) -> dict:
+def _make_tokens(user: OdumUser) -> dict:
     now = datetime.now(tz=timezone.utc)
     access_payload = {
         "sub": str(user.id),
@@ -66,8 +66,8 @@ def refresh(request, payload: RefreshIn):
     if data.get("type") != "refresh":
         raise HttpError(401, "Not a refresh token")
     try:
-        user = OchreUser.objects.get(pk=data["sub"], is_active=True)
-    except OchreUser.DoesNotExist:
+        user = OdumUser.objects.get(pk=data["sub"], is_active=True)
+    except OdumUser.DoesNotExist:
         raise HttpError(401, "User not found")
     return _make_tokens(user)
 
@@ -75,9 +75,9 @@ def refresh(request, payload: RefreshIn):
 @router.post("/register", response=UserOut, auth=None)
 def register(request, payload: RegisterIn):
     from ninja.errors import HttpError
-    if OchreUser.objects.filter(email=payload.email).exists():
+    if OdumUser.objects.filter(email=payload.email).exists():
         raise HttpError(400, "Email already registered")
-    user = OchreUser.objects.create_user(
+    user = OdumUser.objects.create_user(
         email=payload.email,
         password=payload.password,
         first_name=payload.first_name,

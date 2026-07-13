@@ -7,9 +7,9 @@ services:
   db:
     image: postgres:16-alpine
     environment:
-      POSTGRES_DB: ochre
-      POSTGRES_USER: ochre
-      POSTGRES_PASSWORD: ochre
+      POSTGRES_DB: odum
+      POSTGRES_USER: odum
+      POSTGRES_PASSWORD: odum
     ports:
       - "5432:5432"
     volumes:
@@ -29,7 +29,7 @@ services:
       - ../../.env
     environment:
       DJANGO_SETTINGS_MODULE: config.settings.development
-      DATABASE_URL: postgres://ochre:ochre@db:5432/ochre
+      DATABASE_URL: postgres://odum:odum@db:5432/odum
       REDIS_URL: redis://redis:6379/0
       CELERY_BROKER_URL: redis://redis:6379/1
       CELERY_RESULT_BACKEND: redis://redis:6379/2
@@ -53,7 +53,7 @@ services:
       - ../../.env
     environment:
       DJANGO_SETTINGS_MODULE: config.settings.development
-      DATABASE_URL: postgres://ochre:ochre@db:5432/ochre
+      DATABASE_URL: postgres://odum:odum@db:5432/odum
       REDIS_URL: redis://redis:6379/0
       CELERY_BROKER_URL: redis://redis:6379/1
       CELERY_RESULT_BACKEND: redis://redis:6379/2

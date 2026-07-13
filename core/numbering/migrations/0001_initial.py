@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'Number Series',
                 'verbose_name_plural': 'Number Series',
-                'db_table': 'ochre_number_series',
+                'db_table': 'odum_number_series',
                 'unique_together': {('name', 'company_id')},
             },
         ),

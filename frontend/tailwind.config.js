@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        ochre: {
+        odum: {
           50: '#fefce8',
           100: '#fef9c3',
           400: '#facc15',

@@ -45,7 +45,7 @@ function AppSection({ appKey, entities }: { appKey: string; entities: { entity: 
         onClick={() => setOpen(o => !o)}
         className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-700 transition text-sm font-medium"
       >
-        <Icon size={15} className="shrink-0 text-ochre-400" />
+        <Icon size={15} className="shrink-0 text-odum-400" />
         <span className="flex-1 text-left">{label}</span>
         {open ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
       </button>
@@ -58,7 +58,7 @@ function AppSection({ appKey, entities }: { appKey: string; entities: { entity: 
               className={({ isActive }) =>
                 `block px-2 py-1.5 rounded text-xs transition ${
                   isActive
-                    ? 'bg-ochre-600 text-white font-semibold'
+                    ? 'bg-odum-600 text-white font-semibold'
                     : 'text-slate-400 hover:text-white hover:bg-slate-700'
                 }`
               }
@@ -103,7 +103,7 @@ export default function Sidebar() {
           className={({ isActive }) =>
             `flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition ${
               isActive
-                ? 'bg-ochre-600 text-white'
+                ? 'bg-odum-600 text-white'
                 : 'text-slate-300 hover:text-white hover:bg-slate-700'
             }`
           }

@@ -1,7 +1,7 @@
 from django.apps import AppConfig
 
 
-class OchreAuthConfig(AppConfig):
+class OdumAuthConfig(AppConfig):
     name = "core.auth"
-    label = "ochre_auth"
+    label = "odum_auth"
     verbose_name = "Odum Auth"
