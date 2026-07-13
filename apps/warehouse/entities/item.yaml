@@ -29,6 +29,26 @@ fields:
     type: boolean
     default: true
 
+  - name: is_service_item
+    type: boolean
+    default: false
+
+  - name: has_serial_no
+    type: boolean
+    default: false
+
+  - name: has_batch
+    type: boolean
+    default: false
+
+  - name: has_expiry_date
+    type: boolean
+    default: false
+
+  - name: shelf_life_days
+    type: integer
+    default: 0
+
   - name: standard_selling_price
     type: currency
 
@@ -39,6 +59,13 @@ fields:
     type: select
     options: [fifo, moving_avg, standard]
     default: fifo
+
+  - name: barcode
+    type: string
+
+  - name: is_active
+    type: boolean
+    default: true
 
 permissions:
   - role: Stock Manager

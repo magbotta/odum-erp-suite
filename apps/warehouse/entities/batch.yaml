@@ -1,0 +1,44 @@
+entity: Batch
+app: warehouse
+label: Batch
+label_plural: Batches
+description: Batch/lot of items with expiry date tracking (§6.9 — Healthcare, Agriculture).
+
+fields:
+  - name: batch_id
+    type: string
+    required: true
+    label: Batch / Lot No.
+
+  - name: manufacturing_date
+    type: date
+
+  - name: expiry_date
+    type: date
+
+  - name: batch_qty
+    type: float
+    label: Total Batch Qty
+
+  - name: remaining_qty
+    type: float
+
+  - name: status
+    type: select
+    options: [active, expired, recalled, consumed]
+    default: active
+
+  - name: supplier_lot_no
+    type: string
+
+  - name: description
+    type: text
+
+permissions:
+  - role: Stock Manager
+    read: true
+    write: true
+    delete: true
+
+  - role: Purchase Manager
+    read: true

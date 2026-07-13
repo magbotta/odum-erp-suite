@@ -1,0 +1,37 @@
+entity: SerialNo
+app: warehouse
+label: Serial Number
+label_plural: Serial Numbers
+description: Individual serialised unit tracking — from receipt to delivery (§6.9).
+
+fields:
+  - name: serial_no
+    type: string
+    required: true
+    label: Serial Number
+
+  - name: status
+    type: select
+    options: [in_store, delivered, returned, scrapped]
+    default: in_store
+
+  - name: purchase_date
+    type: date
+
+  - name: warranty_expiry_date
+    type: date
+
+  - name: purchase_document_no
+    type: string
+
+  - name: delivery_document_no
+    type: string
+
+permissions:
+  - role: Stock Manager
+    read: true
+    write: true
+    delete: true
+
+  - role: Sales Rep
+    read: true

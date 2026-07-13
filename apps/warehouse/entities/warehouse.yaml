@@ -1,0 +1,49 @@
+entity: Warehouse
+app: warehouse
+label: Warehouse
+label_plural: Warehouses
+description: Physical or virtual storage location — multi-warehouse supported (§6.9).
+
+fields:
+  - name: warehouse_name
+    type: string
+    required: true
+
+  - name: warehouse_code
+    type: string
+    required: true
+    unique: true
+
+  - name: warehouse_type
+    type: select
+    options: [stores, finished_goods, transit, wip, returns, virtual]
+    default: stores
+
+  - name: is_group
+    type: boolean
+    default: false
+
+  - name: address
+    type: text
+
+  - name: city
+    type: string
+
+  - name: country
+    type: string
+
+  - name: is_active
+    type: boolean
+    default: true
+
+permissions:
+  - role: Stock Manager
+    read: true
+    write: true
+    delete: true
+
+  - role: Purchase Manager
+    read: true
+
+  - role: Sales Rep
+    read: true

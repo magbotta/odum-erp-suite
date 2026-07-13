@@ -1,0 +1,50 @@
+entity: CycleCountSheet
+app: warehouse
+label: Cycle Count Sheet
+label_plural: Cycle Count Sheets
+description: Physical stock count sheet — variance auto-posts adjustments on submit (§6.9).
+is_submittable: true
+
+fields:
+  - name: count_date
+    type: date
+    required: true
+
+  - name: status
+    type: select
+    options: [draft, in_progress, completed, submitted, cancelled]
+    default: draft
+
+  - name: remarks
+    type: text
+
+  - name: total_variance_value
+    type: currency
+    default: 0
+
+workflow:
+  states: [Draft, In Progress, Completed, Submitted, Cancelled]
+  transitions:
+    - from: Draft
+      to: In Progress
+    - from: In Progress
+      to: Completed
+    - from: Completed
+      to: Submitted
+      action: post_cycle_count_adjustments
+    - from: Draft
+      to: Cancelled
+    - from: In Progress
+      to: Cancelled
+
+hooks:
+  after_submit:
+    - warehouse.hooks.cycle_count.post_cycle_count_adjustments
+
+permissions:
+  - role: Stock Manager
+    read: true
+    write: true
+    submit: true
+    cancel: true
+    delete: true

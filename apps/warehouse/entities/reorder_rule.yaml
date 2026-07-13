@@ -1,0 +1,34 @@
+entity: ReorderRule
+app: warehouse
+label: Reorder Rule
+label_plural: Reorder Rules
+description: Reorder point, safety stock, and reorder qty per Item per Warehouse (§6.9).
+
+fields:
+  - name: re_order_level
+    type: float
+    required: true
+    label: Reorder Level
+
+  - name: re_order_qty
+    type: float
+    required: true
+    label: Reorder Qty
+
+  - name: safety_stock
+    type: float
+    default: 0
+
+  - name: material_request_type
+    type: select
+    options: [purchase, manufacture, transfer]
+    default: purchase
+
+permissions:
+  - role: Stock Manager
+    read: true
+    write: true
+    delete: true
+
+  - role: Purchase Manager
+    read: true
