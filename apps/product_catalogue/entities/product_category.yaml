@@ -1,0 +1,17 @@
+entity: ProductCategory
+app: product_catalogue
+fields:
+  - {name: name, type: string, required: true}
+  - {name: parent, type: link, target: ProductCategory}
+  - {name: code, type: string}
+  - {name: description, type: text}
+  - {name: default_income_account_id, type: string}
+  - {name: default_expense_account_id, type: string}
+  - {name: default_stock_account_id, type: string}
+  - {name: default_tax_template_id, type: string}
+  - {name: default_valuation_method, type: select, options: [fifo, moving_avg, standard]}
+permissions:
+  - {role: ProductManager, read: true, write: true}
+  - {role: AccountManager, read: true, write: false}
+  - {role: SalesRep, read: true, write: false}
+  - {role: PurchaseOfficer, read: true, write: false}

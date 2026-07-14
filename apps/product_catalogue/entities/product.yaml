@@ -1,0 +1,35 @@
+entity: Product
+app: product_catalogue
+fields:
+  - {name: sku, type: string, required: true}
+  - {name: name, type: string, required: true}
+  - {name: description, type: text}
+  - {name: category, type: link, target: ProductCategory}
+  - {name: product_type, type: select, options: [stockable, service, bundle, digital], default: stockable}
+  - {name: lifecycle_status, type: select, options: [draft, active, discontinued], default: draft}
+  - {name: base_uom_id, type: string}
+  - {name: base_uom_name, type: string}
+  - {name: is_template, type: boolean, default: false}
+  - {name: template, type: link, target: Product}
+  - {name: base_price, type: currency}
+  - {name: standard_cost, type: currency}
+  - {name: currency, type: string, default: USD}
+  - {name: income_account_id, type: string}
+  - {name: expense_account_id, type: string}
+  - {name: stock_account_id, type: string}
+  - {name: tax_template_id, type: string}
+  - {name: is_sellable, type: boolean, default: true}
+  - {name: is_purchasable, type: boolean, default: true}
+  - {name: show_on_website, type: boolean, default: false}
+  - {name: show_on_pos, type: boolean, default: true}
+  - {name: show_on_mobile_app, type: boolean, default: false}
+  - {name: weight, type: float}
+  - {name: weight_uom_name, type: string}
+  - {name: is_active, type: boolean, default: true}
+permissions:
+  - {role: ProductManager, read: true, write: true}
+  - {role: SalesRep, read: true, write: false}
+  - {role: PurchaseOfficer, read: true, write: false}
+  - {role: WarehouseStaff, read: true, write: false}
+hooks:
+  before_save: [inherit_category_defaults]

@@ -1,0 +1,15 @@
+entity: PriceList
+app: product_catalogue
+fields:
+  - {name: name, type: string, required: true}
+  - {name: currency, type: string, default: USD}
+  - {name: is_buying, type: boolean, default: false}
+  - {name: is_selling, type: boolean, default: true}
+  - {name: is_active, type: boolean, default: true}
+  - {name: valid_from, type: date}
+  - {name: valid_to, type: date}
+permissions:
+  - {role: ProductManager, read: true, write: true}
+  - {role: Accountant, read: true, write: true}
+  - {role: SalesRep, read: true, write: false}
+  - {role: PurchaseOfficer, read: true, write: false}
