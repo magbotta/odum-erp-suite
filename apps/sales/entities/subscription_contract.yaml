@@ -1,0 +1,19 @@
+entity: SubscriptionContract
+app: sales
+fields:
+  - {name: contract_number, type: string, read_only: true}
+  - {name: customer, type: link, target: Customer, required: true}
+  - {name: start_date, type: date, required: true}
+  - {name: end_date, type: date}
+  - {name: frequency, type: select, options: [weekly, monthly, quarterly, annual], default: monthly}
+  - {name: currency, type: string, default: USD}
+  - {name: monthly_value, type: currency, default: 0}
+  - {name: status, type: select, options: [active, paused, cancelled, expired], default: active}
+  - {name: next_billing_date, type: date}
+  - {name: notes, type: text}
+  - {name: items, type: table, target: SubscriptionItem}
+
+permissions:
+  - {role: SalesRep, read: true, write: true}
+  - {role: SalesManager, read: true, write: true}
+  - {role: Accountant, read: true}

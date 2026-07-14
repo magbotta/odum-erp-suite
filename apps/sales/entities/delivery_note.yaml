@@ -1,0 +1,23 @@
+entity: DeliveryNote
+app: sales
+fields:
+  - {name: dn_number, type: string, label: "DN #", read_only: true}
+  - {name: sales_order, type: link, target: SalesOrder}
+  - {name: customer, type: link, target: Customer, required: true}
+  - {name: posting_date, type: date, required: true}
+  - {name: status, type: select, options: [draft, submitted, cancelled], default: draft}
+  - {name: shipping_address, type: text}
+  - {name: remarks, type: text}
+  - {name: items, type: table, target: DeliveryNoteItem}
+
+permissions:
+  - {role: StoreManager, read: true, write: true, submit: true}
+  - {role: SalesRep, read: true, write: true}
+  - {role: SalesManager, read: true, write: true, submit: true, cancel: true}
+  - {role: Accountant, read: true}
+
+workflow:
+  states: [draft, submitted, cancelled]
+  transitions:
+    - {from: draft, to: submitted, action: submit_delivery}
+    - {from: submitted, to: cancelled, action: cancel_delivery}

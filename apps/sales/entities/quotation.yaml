@@ -1,0 +1,34 @@
+entity: Quotation
+app: sales
+fields:
+  - {name: quotation_number, type: string, label: "Quote #", read_only: true}
+  - {name: customer, type: link, target: Customer, required: true}
+  - {name: posting_date, type: date, required: true}
+  - {name: valid_till, type: date}
+  - {name: currency, type: string, default: USD}
+  - {name: exchange_rate, type: float, default: 1}
+  - {name: discount_amount, type: currency, default: 0}
+  - {name: net_total, type: currency, read_only: true}
+  - {name: tax_total, type: currency, read_only: true}
+  - {name: grand_total, type: currency, read_only: true}
+  - {name: status, type: select, options: [draft, sent, accepted, declined, expired, converted], default: draft}
+  - {name: opportunity_id, type: string, label: "CRM Opportunity ID"}
+  - {name: terms, type: text}
+  - {name: notes, type: text}
+  - {name: items, type: table, target: QuotationItem}
+
+permissions:
+  - {role: SalesRep, read: true, write: true, submit: true}
+  - {role: SalesManager, read: true, write: true, submit: true, cancel: true}
+  - {role: Accountant, read: true}
+
+workflow:
+  states: [draft, sent, accepted, declined, expired, converted]
+  transitions:
+    - {from: draft, to: sent, action: send_quote}
+    - {from: sent, to: accepted, action: accept}
+    - {from: sent, to: declined, action: decline}
+    - {from: sent, to: expired, action: expire}
+    - {from: accepted, to: converted, action: convert_to_order}
+    - {from: draft, to: converted, action: convert_to_order}
+    - {from: sent, to: converted, action: convert_to_order}

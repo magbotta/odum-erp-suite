@@ -1,0 +1,22 @@
+entity: SalesReturn
+app: sales
+fields:
+  - {name: return_number, type: string, read_only: true}
+  - {name: customer, type: link, target: Customer, required: true}
+  - {name: delivery_note, type: link, target: DeliveryNote}
+  - {name: posting_date, type: date, required: true}
+  - {name: return_reason, type: text}
+  - {name: status, type: select, options: [draft, submitted, cancelled], default: draft}
+  - {name: net_total, type: currency, read_only: true}
+  - {name: items, type: table, target: SalesReturnItem}
+
+permissions:
+  - {role: SalesRep, read: true, write: true, submit: true}
+  - {role: SalesManager, read: true, write: true, submit: true, cancel: true}
+  - {role: Accountant, read: true}
+
+workflow:
+  states: [draft, submitted, cancelled]
+  transitions:
+    - {from: draft, to: submitted, action: submit_return}
+    - {from: submitted, to: cancelled, action: cancel}
