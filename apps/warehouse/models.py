@@ -107,6 +107,11 @@ class Item(BaseEntity):
     expense_account_id = models.UUIDField(null=True, blank=True)
     stock_account_id = models.UUIDField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
+    # Soft link to product_catalogue.Product — UUID only, no FK across app boundary
+    product_id = models.UUIDField(
+        null=True, blank=True, db_index=True,
+        help_text="UUID of the product_catalogue.Product this Item extends.",
+    )
 
     class Meta(BaseEntity.Meta):
         db_table = "warehouse_items"
