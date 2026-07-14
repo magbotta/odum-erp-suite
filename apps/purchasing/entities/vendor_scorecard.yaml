@@ -1,0 +1,21 @@
+entity: VendorScorecard
+app: purchasing
+fields:
+  - {name: vendor_id, type: string, required: true}
+  - {name: vendor_name, type: string, required: true}
+  - {name: period_start, type: date, required: true}
+  - {name: period_end, type: date, required: true}
+  - {name: total_pos, type: integer, default: 0, read_only: true}
+  - {name: on_time_pos, type: integer, default: 0, read_only: true}
+  - {name: on_time_delivery_pct, type: float, label: "On-Time Delivery %", read_only: true}
+  - {name: total_received_qty, type: float, read_only: true}
+  - {name: rejected_qty, type: float, read_only: true}
+  - {name: quality_rejection_pct, type: float, label: "Rejection %", read_only: true}
+  - {name: price_variance_pct, type: float, label: "Price Variance %", read_only: true}
+  - {name: composite_score, type: float, label: "Composite Score (0-100)", read_only: true}
+  - {name: notes, type: text}
+
+permissions:
+  - {role: PurchaseManager, read: true, write: true}
+  - {role: Purchaser, read: true}
+  - {role: Accountant, read: true}

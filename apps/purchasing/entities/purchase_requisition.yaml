@@ -1,0 +1,30 @@
+entity: PurchaseRequisition
+app: purchasing
+fields:
+  - {name: requisition_number, type: string, label: "PR Number", read_only: true}
+  - {name: posting_date, type: date, label: "Date", required: true}
+  - {name: required_by_date, type: date, label: "Required By"}
+  - {name: status, type: select, options: [draft, submitted, approved, ordered, rejected, cancelled], default: draft}
+  - {name: purpose, type: text, label: "Purpose / Justification"}
+  - {name: requested_by_id, type: string, label: "Requested By (Employee ID)"}
+  - {name: approved_by_id, type: string, label: "Approved By (Employee ID)", read_only: true}
+  - {name: approved_at, type: datetime, read_only: true}
+  - {name: rejection_reason, type: text}
+  - {name: cost_center_id, type: string, label: "Cost Center"}
+  - {name: project_id, type: string, label: "Project"}
+  - {name: items, type: table, target: PurchaseRequisitionItem}
+
+permissions:
+  - {role: Purchaser, read: true, write: true, submit: true}
+  - {role: PurchaseManager, read: true, write: true, submit: true, cancel: true}
+  - {role: Accountant, read: true, write: false}
+
+workflow:
+  states: [draft, submitted, approved, ordered, rejected, cancelled]
+  transitions:
+    - {from: draft, to: submitted, action: submit}
+    - {from: submitted, to: approved, action: approve}
+    - {from: submitted, to: rejected, action: reject}
+    - {from: approved, to: ordered, action: convert_to_po}
+    - {from: draft, to: cancelled, action: cancel}
+    - {from: submitted, to: cancelled, action: cancel}

@@ -1,0 +1,23 @@
+entity: RequestForQuotation
+app: purchasing
+fields:
+  - {name: rfq_number, type: string, label: "RFQ Number", read_only: true}
+  - {name: posting_date, type: date, required: true}
+  - {name: response_deadline, type: date, label: "Response Deadline"}
+  - {name: status, type: select, options: [draft, sent, closed, awarded, cancelled], default: draft}
+  - {name: message_for_supplier, type: text}
+  - {name: requisition_id, type: string, label: "Purchase Requisition ID"}
+  - {name: items, type: table, target: RFQItem}
+
+permissions:
+  - {role: Purchaser, read: true, write: true, submit: true}
+  - {role: PurchaseManager, read: true, write: true, submit: true, cancel: true}
+
+workflow:
+  states: [draft, sent, closed, awarded, cancelled]
+  transitions:
+    - {from: draft, to: sent, action: send_to_suppliers}
+    - {from: sent, to: closed, action: close}
+    - {from: closed, to: awarded, action: award}
+    - {from: draft, to: cancelled, action: cancel}
+    - {from: sent, to: cancelled, action: cancel}

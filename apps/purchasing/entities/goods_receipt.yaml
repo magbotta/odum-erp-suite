@@ -1,0 +1,26 @@
+entity: GoodsReceipt
+app: purchasing
+fields:
+  - {name: grn_number, type: string, label: "GRN Number", read_only: true}
+  - {name: purchase_order, type: link, target: PurchaseOrder, label: "Purchase Order"}
+  - {name: vendor_id, type: string, required: true}
+  - {name: vendor_name, type: string, required: true}
+  - {name: posting_date, type: date, required: true}
+  - {name: status, type: select, options: [draft, submitted, cancelled], default: draft}
+  - {name: remarks, type: text}
+  - {name: items, type: table, target: GoodsReceiptItem}
+
+permissions:
+  - {role: StoreManager, read: true, write: true, submit: true}
+  - {role: Purchaser, read: true, write: true}
+  - {role: PurchaseManager, read: true, write: true, submit: true, cancel: true}
+  - {role: Accountant, read: true}
+
+workflow:
+  states: [draft, submitted, cancelled]
+  transitions:
+    - {from: draft, to: submitted, action: submit_grn}
+    - {from: submitted, to: cancelled, action: cancel_grn}
+
+hooks:
+  after_submit: [submit_grn_hook]

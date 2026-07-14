@@ -1,59 +1,40 @@
 entity: PurchaseOrder
 app: purchasing
-label: Purchase Order
-label_plural: Purchase Orders
-description: A purchase order issued to a vendor (§6.7).
-is_submittable: true
-
 fields:
-  - name: po_number
-    type: string
-
-  - name: posting_date
-    type: date
-    required: true
-
-  - name: expected_delivery_date
-    type: date
-
-  - name: currency
-    type: string
-    default: USD
-
-  - name: grand_total
-    type: currency
-    default: 0
-
-  - name: terms_and_conditions
-    type: text
-
-  - name: notes
-    type: text
-
-workflow:
-  states: [Draft, Submitted, Partially Received, Received, Billed, Cancelled]
-  transitions:
-    - from: Draft
-      to: Submitted
-    - from: Submitted
-      to: Partially Received
-    - from: Submitted
-      to: Received
-    - from: Partially Received
-      to: Received
-    - from: Received
-      to: Billed
-    - from: Draft
-      to: Cancelled
-    - from: Submitted
-      to: Cancelled
+  - {name: po_number, type: string, label: "PO Number", read_only: true}
+  - {name: vendor_id, type: string, label: "Vendor ID", required: true}
+  - {name: vendor_name, type: string, label: "Vendor", required: true}
+  - {name: posting_date, type: date, required: true}
+  - {name: expected_delivery_date, type: date, label: "Expected Delivery"}
+  - {name: currency, type: string, default: USD}
+  - {name: exchange_rate, type: float, default: 1}
+  - {name: net_total, type: currency, label: "Net Total", read_only: true}
+  - {name: tax_total, type: currency, label: "Tax", read_only: true}
+  - {name: grand_total, type: currency, label: "Grand Total", read_only: true}
+  - {name: status, type: select, options: [draft, submitted, partially_received, received, billed, cancelled], default: draft}
+  - {name: approval_status, type: select, options: [not_required, pending, approved, rejected], default: not_required}
+  - {name: is_blanket_order, type: boolean, default: false, label: "Blanket/Contract Order"}
+  - {name: blanket_order_end_date, type: date}
+  - {name: is_drop_ship, type: boolean, default: false, label: "Drop Ship"}
+  - {name: drop_ship_address, type: text}
+  - {name: terms_and_conditions, type: text}
+  - {name: notes, type: text}
+  - {name: requisition_id, type: string, label: "Source Requisition"}
+  - {name: rfq_id, type: string, label: "Source RFQ"}
+  - {name: items, type: table, target: PurchaseOrderItem}
 
 permissions:
-  - role: Purchase Manager
-    read: true
-    write: true
-    submit: true
-    cancel: true
+  - {role: Purchaser, read: true, write: true, submit: true}
+  - {role: PurchaseManager, read: true, write: true, submit: true, cancel: true}
+  - {role: Accountant, read: true, write: false}
 
-  - role: Accountant
-    read: true
+workflow:
+  states: [draft, submitted, partially_received, received, billed, cancelled]
+  transitions:
+    - {from: draft, to: submitted, action: submit_po}
+    - {from: submitted, to: partially_received, action: partial_receive}
+    - {from: submitted, to: received, action: full_receive}
+    - {from: partially_received, to: received, action: full_receive}
+    - {from: received, to: billed, action: mark_billed}
+    - {from: submitted, to: cancelled, action: cancel_po}
+    - {from: partially_received, to: cancelled, action: cancel_po}

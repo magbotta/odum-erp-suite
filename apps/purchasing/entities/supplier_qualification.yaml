@@ -1,0 +1,30 @@
+entity: SupplierQualification
+app: purchasing
+fields:
+  - {name: vendor_name, type: string, required: true}
+  - {name: contact_name, type: string, required: true}
+  - {name: contact_email, type: email, required: true}
+  - {name: contact_phone, type: phone}
+  - {name: business_type, type: string}
+  - {name: tax_registration_no, type: string, label: "Tax Registration No."}
+  - {name: status, type: select, options: [new, under_review, additional_info, qualified, disqualified], default: new}
+  - {name: qualification_score, type: float, default: 0, read_only: true}
+  - {name: has_tax_cert, type: boolean, default: false, label: "Tax Certificate Received"}
+  - {name: has_insurance_cert, type: boolean, default: false, label: "Insurance Certificate Received"}
+  - {name: has_bank_details, type: boolean, default: false, label: "Bank Details Received"}
+  - {name: esg_questionnaire_completed, type: boolean, default: false, label: "ESG Questionnaire Completed"}
+  - {name: notes, type: text}
+
+permissions:
+  - {role: Purchaser, read: true, write: true}
+  - {role: PurchaseManager, read: true, write: true}
+
+workflow:
+  states: [new, under_review, additional_info, qualified, disqualified]
+  transitions:
+    - {from: new, to: under_review, action: start_review}
+    - {from: under_review, to: additional_info, action: request_info}
+    - {from: additional_info, to: under_review, action: resume_review}
+    - {from: under_review, to: qualified, action: approve_supplier}
+    - {from: under_review, to: disqualified, action: disqualify}
+    - {from: additional_info, to: disqualified, action: disqualify}
