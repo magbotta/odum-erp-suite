@@ -1,0 +1,21 @@
+entity: RiskIssue
+app: project
+fields:
+  - {name: project_id, type: string, required: true, label: "Project"}
+  - {name: record_type, type: select, options: [risk, issue], default: risk, label: "Type"}
+  - {name: title, type: string, required: true}
+  - {name: description, type: text}
+  - {name: severity, type: select, options: [low, medium, high, critical], default: medium}
+  - {name: status, type: select, options: [open, in_progress, resolved, closed, accepted], default: open}
+  - {name: probability, type: float, label: "Probability (%)"}
+  - {name: impact, type: text}
+  - {name: mitigation_plan, type: text, label: "Mitigation Plan"}
+  - {name: owner_id, type: string, label: "Owner"}
+  - {name: owner_name, type: string}
+  - {name: due_date, type: date}
+  - {name: resolved_at, type: date, read_only: true}
+  - {name: is_confidential, type: boolean, default: false}
+
+permissions:
+  - {role: ProjectManager, read: true, write: true}
+  - {role: Employee, read: true, write: true}

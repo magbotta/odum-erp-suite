@@ -5,24 +5,30 @@ track_changes: true
 multi_company: true
 
 fields:
-  - {name: employee_name, type: string, read_only: true, label: "Employee"}
+  - {name: timesheet_number, type: string, read_only: true, label: "Timesheet No."}
+  - {name: employee_id, type: string, required: true, label: "Employee"}
+  - {name: employee_name, type: string, read_only: true, label: "Employee Name"}
   - {name: start_date, type: date, required: true, label: "From Date"}
   - {name: end_date, type: date, required: true, label: "To Date"}
-  - {name: status, type: select, options: [Draft, Submitted, Approved, Rejected], default: Draft}
+  - {name: status, type: select, options: [draft, submitted, approved, rejected], default: draft, read_only: true}
   - {name: total_hours, type: float, read_only: true, label: "Total Hours"}
   - {name: total_billable_hours, type: float, read_only: true, label: "Billable Hours"}
+  - {name: total_billing_amount, type: currency, read_only: true, label: "Billing Amount"}
+  - {name: rejection_reason, type: text, label: "Rejection Reason"}
+  - {name: entries, type: table, target: TimesheetEntry}
 
 permissions:
   - {role: Employee, read: true, write: true, submit: true}
   - {role: ProjectManager, read: true, write: true, submit: true}
+  - {role: Accountant, read: true}
 
 workflow:
-  states: [Draft, Submitted, Approved, Rejected]
+  states: [draft, submitted, approved, rejected]
   transitions:
-    - {from: Draft, to: Submitted, action: project.hooks.timesheet.calculate_totals}
-    - {from: Submitted, to: Approved}
-    - {from: Submitted, to: Rejected}
-    - {from: Rejected, to: Draft}
+    - {from: draft, to: submitted, action: project.hooks.timesheet.submit_timesheet}
+    - {from: submitted, to: approved, action: project.hooks.timesheet.approve_timesheet}
+    - {from: submitted, to: rejected, action: project.hooks.timesheet.reject_timesheet}
+    - {from: rejected, to: draft}
 
 hooks:
   before_save: [project.hooks.timesheet.calculate_totals]

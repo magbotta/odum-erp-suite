@@ -6,16 +6,37 @@ multi_company: true
 fields:
   - {name: project_name, type: string, required: true, label: "Project Name"}
   - {name: project_code, type: string, label: "Project Code"}
-  - {name: status, type: select, options: [Planning, Active, On Hold, Completed, Cancelled], default: Planning}
+  - {name: status, type: select, options: [planning, active, paused, completed, cancelled], default: planning}
+  - {name: billing_type, type: select, options: [time_and_material, fixed_price, milestone, retainer, non_billable], default: time_and_material, label: "Billing Type"}
   - {name: description, type: text, label: "Description"}
   - {name: start_date, type: date, label: "Start Date"}
   - {name: expected_end_date, type: date, label: "Expected End Date"}
+  - {name: actual_end_date, type: date, label: "Actual End Date", read_only: true}
   - {name: is_billable, type: boolean, default: false, label: "Is Billable"}
   - {name: budget, type: currency, label: "Budget"}
   - {name: actual_cost, type: currency, read_only: true, label: "Actual Cost"}
+  - {name: billed_amount, type: currency, read_only: true, label: "Billed Amount"}
+  - {name: percent_complete, type: float, read_only: true, label: "% Complete"}
   - {name: currency, type: string, default: "USD", label: "Currency"}
+  - {name: customer_id, type: string, label: "Customer"}
+  - {name: customer_name, type: string, label: "Customer Name"}
+  - {name: project_manager_id, type: string, label: "Project Manager"}
+  - {name: project_manager_name, type: string, label: "PM Name"}
+  - {name: cost_center_id, type: string, label: "Cost Center"}
+  - {name: template_id, type: string, label: "From Template"}
 
 permissions:
-  - {role: ProjectManager, read: true, write: true}
+  - {role: ProjectManager, read: true, write: true, submit: true}
   - {role: Employee, read: true, write: false}
   - {role: Accountant, read: true, write: false}
+
+workflow:
+  states: [planning, active, paused, completed, cancelled]
+  transitions:
+    - {from: planning, to: active}
+    - {from: active, to: paused}
+    - {from: paused, to: active}
+    - {from: active, to: completed}
+    - {from: planning, to: cancelled}
+    - {from: active, to: cancelled}
+    - {from: paused, to: cancelled}
