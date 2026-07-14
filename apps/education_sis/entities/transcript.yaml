@@ -1,0 +1,24 @@
+entity: AcademicTranscript
+app: education_sis
+label: Academic Transcript
+plural: Academic Transcripts
+fields:
+  - {name: transcript_number, type: string, label: "Transcript Number"}
+  - {name: status, type: select, options: [draft, official, sealed]}
+  - {name: cumulative_gpa, type: float, label: "Cumulative GPA"}
+  - {name: total_credit_hours, type: integer, label: "Total Credit Hours Earned"}
+  - {name: generated_at, type: datetime, label: "Generated At"}
+  - {name: sealed_at, type: datetime, label: "Sealed At"}
+  - {name: transcript_data, type: json, label: "Transcript Content (by Year / Term)"}
+  - {name: issued_to, type: string, label: "Issued To"}
+  - {name: issued_date, type: date, label: "Issue Date"}
+workflow:
+  states: [draft, official, sealed]
+  transitions:
+    - {from: draft, to: official, action: generate_transcript}
+    - {from: official, to: sealed, action: seal_transcript}
+permissions:
+  - {role: Registrar, read: true, write: true, submit: true}
+  - {role: AcademicAdmin, read: true, write: false}
+  - {role: Student, read: true, write: false}
+  - {role: Parent, read: true, write: false}

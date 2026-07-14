@@ -1,0 +1,27 @@
+entity: IEPCase
+app: education_sis
+label: IEP / 504 Case
+plural: IEP / 504 Cases
+fields:
+  - {name: case_number, type: string, label: "Case Number"}
+  - {name: plan_type, type: select, label: "Plan Type", options: [iep, plan_504, gifted], required: true}
+  - {name: status, type: select, options: [draft, active, under_review, completed, transferred]}
+  - {name: primary_disability, type: string, label: "Primary Disability / Eligibility Category"}
+  - {name: eligibility_date, type: date, label: "Eligibility Determination Date"}
+  - {name: plan_start_date, type: date, label: "Plan Start Date"}
+  - {name: plan_end_date, type: date, label: "Plan End Date"}
+  - {name: annual_review_date, type: date, label: "Annual Review Date"}
+  - {name: triennial_review_date, type: date, label: "Triennial Re-evaluation Date"}
+  - {name: case_manager_name, type: string, label: "Case Manager"}
+  - {name: annual_goals, type: json, label: "Annual Goals"}
+  - {name: services, type: json, label: "Services & Minutes per Week"}
+  - {name: accommodations, type: json, label: "Accommodations"}
+  - {name: last_meeting_date, type: date, label: "Last IEP Team Meeting"}
+  - {name: next_meeting_date, type: date, label: "Next IEP Team Meeting"}
+  - {name: parent_consent_obtained, type: boolean, label: "Parent/Guardian Consent Obtained"}
+  - {name: parent_consent_date, type: date, label: "Consent Date"}
+  - {name: notes, type: text, label: "Notes"}
+permissions:
+  - {role: SpecialEdCoordinator, read: true, write: true}
+  - {role: Teacher, read: true, write: false}
+  - {role: Parent, read: false, write: false}

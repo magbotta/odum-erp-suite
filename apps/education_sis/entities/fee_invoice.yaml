@@ -1,0 +1,25 @@
+entity: StudentFeeInvoice
+app: education_sis
+label: Student Fee Invoice
+plural: Student Fee Invoices
+fields:
+  - {name: invoice_number, type: string, label: "Invoice Number"}
+  - {name: status, type: select, options: [draft, issued, paid, partially_paid, overdue, cancelled]}
+  - {name: due_date, type: date, label: "Due Date", required: true}
+  - {name: issue_date, type: date, label: "Issue Date"}
+  - {name: amount, type: currency, label: "Invoice Amount", required: true}
+  - {name: paid_amount, type: currency, label: "Amount Paid"}
+  - {name: notes, type: string, label: "Notes"}
+workflow:
+  states: [draft, issued, paid, partially_paid, overdue, cancelled]
+  transitions:
+    - {from: draft, to: issued, action: issue_fee_invoice}
+    - {from: issued, to: paid, action: record_payment}
+    - {from: issued, to: partially_paid, action: record_payment}
+    - {from: partially_paid, to: paid, action: record_payment}
+    - {from: issued, to: cancelled, action: cancel_fee_invoice}
+    - {from: draft, to: cancelled, action: cancel_fee_invoice}
+permissions:
+  - {role: FinanceOfficer, read: true, write: true, submit: true}
+  - {role: Student, read: true, write: false}
+  - {role: Parent, read: true, write: false}

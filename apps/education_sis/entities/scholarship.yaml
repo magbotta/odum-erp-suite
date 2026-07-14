@@ -1,0 +1,21 @@
+entity: Scholarship
+app: education_sis
+label: Scholarship / Bursary
+plural: Scholarships & Bursaries
+fields:
+  - {name: name, type: string, label: "Scholarship Name", required: true}
+  - {name: code, type: string, label: "Code"}
+  - {name: scholarship_type, type: select, label: "Type", options: [merit, need, athletic, departmental, external, bursary, government_grant]}
+  - {name: amount, type: currency, label: "Amount", required: true}
+  - {name: currency, type: string, label: "Currency"}
+  - {name: is_percentage, type: boolean, label: "Amount is Percentage of Tuition"}
+  - {name: eligibility_criteria, type: text, label: "Eligibility Criteria"}
+  - {name: renewable, type: boolean, label: "Renewable"}
+  - {name: maximum_recipients, type: integer, label: "Max Recipients"}
+  - {name: active_from, type: date, label: "Active From"}
+  - {name: active_until, type: date, label: "Active Until"}
+  - {name: is_active, type: boolean, label: "Active"}
+permissions:
+  - {role: FinancialAidOfficer, read: true, write: true}
+  - {role: AcademicAdmin, read: true, write: false}
+  - {role: Student, read: true, write: false}

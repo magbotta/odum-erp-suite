@@ -1,0 +1,17 @@
+entity: Term
+app: education_sis
+label: Academic Term
+plural: Academic Terms
+fields:
+  - {name: name, type: string, label: "Term Name", required: true}
+  - {name: term_type, type: select, label: "Term Type", options: [fall, spring, summer, trimester_1, trimester_2, trimester_3, full_year], required: true}
+  - {name: start_date, type: date, label: "Start Date", required: true}
+  - {name: end_date, type: date, label: "End Date", required: true}
+  - {name: registration_open_date, type: date, label: "Registration Opens"}
+  - {name: registration_close_date, type: date, label: "Registration Closes"}
+  - {name: grade_submission_deadline, type: date, label: "Grade Submission Deadline"}
+  - {name: is_active, type: boolean, label: "Current Term"}
+permissions:
+  - {role: Registrar, read: true, write: true}
+  - {role: Faculty, read: true, write: false}
+  - {role: Student, read: true, write: false}

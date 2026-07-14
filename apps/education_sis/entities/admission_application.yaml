@@ -1,0 +1,37 @@
+entity: AdmissionApplication
+app: education_sis
+label: Admission Application
+plural: Admission Applications
+fields:
+  - {name: application_number, type: string, label: "Application Number"}
+  - {name: status, type: select, options: [draft, submitted, under_review, offer_made, accepted, rejected, waitlisted, withdrawn]}
+  - {name: applicant_first_name, type: string, label: "First Name", required: true}
+  - {name: applicant_last_name, type: string, label: "Last Name", required: true}
+  - {name: email, type: email, label: "Email", required: true}
+  - {name: phone, type: phone, label: "Phone"}
+  - {name: date_of_birth, type: date, label: "Date of Birth"}
+  - {name: address, type: text, label: "Address"}
+  - {name: previous_institution, type: string, label: "Previous Institution"}
+  - {name: gpa_at_previous_institution, type: float, label: "Previous GPA"}
+  - {name: personal_statement, type: text, label: "Personal Statement"}
+  - {name: review_notes, type: text, label: "Reviewer Notes"}
+  - {name: rejection_reason, type: text, label: "Rejection Reason"}
+  - {name: offer_date, type: date, label: "Offer Date"}
+  - {name: offer_expiry_date, type: date, label: "Offer Expiry Date"}
+  - {name: acceptance_date, type: date, label: "Acceptance Date"}
+workflow:
+  states: [draft, submitted, under_review, offer_made, accepted, rejected, waitlisted, withdrawn]
+  transitions:
+    - {from: draft, to: submitted, action: submit_application}
+    - {from: submitted, to: under_review, action: start_review}
+    - {from: submitted, to: waitlisted, action: waitlist_application}
+    - {from: under_review, to: offer_made, action: make_offer}
+    - {from: under_review, to: rejected, action: reject_application}
+    - {from: under_review, to: waitlisted, action: waitlist_application}
+    - {from: waitlisted, to: offer_made, action: make_offer}
+    - {from: offer_made, to: accepted, action: accept_offer}
+    - {from: offer_made, to: rejected, action: reject_application}
+permissions:
+  - {role: AdmissionsOfficer, read: true, write: true, submit: true}
+  - {role: AcademicAdmin, read: true, write: true}
+  - {role: Applicant, read: true, write: false}

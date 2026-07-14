@@ -1,0 +1,20 @@
+entity: Room
+app: education_sis
+label: Classroom / Room
+plural: Rooms
+fields:
+  - {name: room_number, type: string, label: "Room Number", required: true}
+  - {name: building, type: string, label: "Building"}
+  - {name: floor, type: string, label: "Floor"}
+  - {name: room_type, type: select, label: "Room Type", options: [lecture, seminar, lab, studio, gym, auditorium, office, other]}
+  - {name: capacity, type: integer, label: "Seating Capacity", required: true}
+  - {name: has_projector, type: boolean, label: "Has Projector"}
+  - {name: has_whiteboard, type: boolean, label: "Has Whiteboard"}
+  - {name: is_accessible, type: boolean, label: "ADA / Wheelchair Accessible"}
+  - {name: notes, type: text, label: "Notes"}
+  - {name: is_active, type: boolean, label: "Active"}
+permissions:
+  - {role: FacilitiesManager, read: true, write: true}
+  - {role: Registrar, read: true, write: true}
+  - {role: Faculty, read: true, write: false}
+  - {role: Student, read: true, write: false}
