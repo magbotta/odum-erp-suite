@@ -6,6 +6,42 @@
 
 ---
 
+## Working Memory — Module Map (for AI sessions)
+
+**Tech stack:** Python 3.9 / Django 5.x / Django Ninja (typed REST) / PostgreSQL / Redis / Celery. All models inherit `BaseEntity` (UUID PK, `company_id`, `custom_fields` JSONB, soft-delete). Cross-app references use UUID soft-links + denormalized cache fields — never Django ForeignKeys across app boundaries except within tightly coupled pairs that already have existing FKs (e.g. sales→warehouse for item lines, sales→accounting for customer).
+
+**App-boundary rule (CI-enforced):** No cross-App raw SQL, no importing another App's models directly unless they are in the established tight-coupling list. All cross-app interaction via UUID soft-link or the internal event bus.
+
+**12 Core Apps (ship by default):**
+| App | `apps/` path | Key entities |
+|---|---|---|
+| Product Catalogue | `product_catalogue` | Product, ProductCategory, PriceList, ProductPrice, ProductVariant, ProductBundle |
+| Accounting | `accounting` | GLAccount, JournalEntry, Customer, Vendor, SalesInvoice, PurchaseInvoice |
+| Asset Management | `asset_management` | Asset, AssetCategory, DepreciationSchedule |
+| CRM | `crm` | Lead, Opportunity, Contact, Account, Pipeline, Quote, Case |
+| HRM | `hrm` | Employee, LeaveType, LeaveRequest, Attendance, Recruitment |
+| Payroll | `payroll` | SalaryStructure, PayrollEntry, SalarySlip |
+| Project Management | `project` | Project, Task, Timesheet |
+| Purchasing | `purchasing` | PurchaseOrder, GoodsReceipt, Vendor, RFQ |
+| Sales | `sales` | SalesOrder, Quotation, DeliveryNote, SubscriptionContract |
+| Warehouse / Inventory | `warehouse` | Item (stock-extension of Product), Warehouse, StockEntry, StockLedger, Batch, SerialNo |
+| Website / CMS | `website` | WebPage, BlogPost, WebForm |
+| Expense & Travel | `expense` | ExpenseClaim, ExpenseItem, TravelRequest |
+
+**Product Catalogue is the shared Product/Item Master.** Sales, Purchasing, Warehouse, POS, Website, Manufacturing, and Telecom must reference `product_catalogue.Product` (by UUID or FK) rather than defining their own product concept. `warehouse.Item` is the stock-behaviour extension of Product — it adds `is_stock_item`, `has_serial_no`, `has_batch`, `valuation_method`, etc., and soft-links back to Product via `item.product_id`. PriceList and ProductPrice live in product_catalogue; sales references them via UUID soft-link.
+
+**11 Industry Apps (installable):** Manufacturing, POS/Retail, Education/SIS, Healthcare/HIS, Agriculture, Nonprofit, Telecom, Government, Microfinance, Legal Services, Insurance.
+
+**Core Payment Gateway (`core/payments_gateway/`):** Shared Payment Gateway abstraction (§11). Every module that receives money — Accounting AR, POS, Website checkout, Microfinance repayments, Government revenue collection — calls the same internal PaymentGateway API. Drivers: `MobileMoneyDriver` (MTN MoMo / AirtelTigo / Vodafone Cash — stub implementations), `CashTellerDriver`, `BankReconciliationDriver`. Idempotent-webhook-processing and audit-trail patterns enforced at the gateway layer for all drivers.
+
+**Government App (`apps/government/`) — MMDA-first, generically applicable:** Implemented with Metropolitan/Municipal/District Assembly (MMDA) revenue collection in Ghana (under Local Governance Act 2016, Act 936) as the concrete deployment target. Every revenue type — property rates, permit/license fees, local levies, service charges — is a payable document that routes through the core Payment Gateway rather than inventing parallel payment logic. GASB-style fund accounting references are illustrative of the accounting mechanism (appropriation + encumbrance = hard budget ceiling), not a US-only dependency. Depends on: Purchasing, Accounting, Website, core/payments_gateway, core/geospatial (§5), Asset Management.
+
+**Python 3.9 constraints in api.py files:** use `Optional[X]` not `X | None`; `.format()` strings not f-strings; no `from __future__ import annotations`.
+
+**Entity YAML field types:** string, text, integer, float, boolean, date, datetime, currency, select, link, table. Do NOT use "uuid" type (causes load failure).
+
+---
+
 ## 1. Executive Summary & Positioning
 
 Odoo and ERPNext win on breadth (dozens of pre-integrated modules) and a metadata-driven development model that lets a small core team and a large community ship modules fast. Salesforce wins on CRM depth, a mature platform (Apex/Lightning) for enterprise customization, and ecosystem/marketplace gravity. Odum ERP's wedge is: **match the module breadth of ERPNext/Odoo, keep Salesforce-grade extensibility patterns (a real platform, not just an app), and stay pure open source with no license traps** (Odoo Enterprise gates key modules behind a proprietary license; ERPNext is more permissively licensed but its cloud arm is the main sustainability engine).
@@ -80,6 +116,7 @@ flowchart TB
         BUS[Internal Event Bus: sync signals + async Celery tasks]
 
         subgraph CoreApps["Core Apps (ship by default)"]
+            PC[Product Catalogue]
             ACC[Accounting]
             AST[Asset Mgmt]
             CRM[CRM]
@@ -322,6 +359,22 @@ A module Odoo and ERPNext both ship as standard and that was previously missing 
 - **Mileage tracking:** configurable per-distance reimbursement rates with GPS-assisted or manual trip logging.
 - **Analytics:** spend-by-category, spend-by-employee, and policy-compliance dashboards via the built-in report builder (§3) — the same "spend cube" pattern already used for Purchasing spend analytics (§6.7).
 
+### 6.12 Product Catalogue
+
+Sales, Purchasing, Warehouse, and Website all reference "the product," "item category," and "product line" throughout their capability lists, but until now that concept was never actually defined as its own module — an implicit assumption rather than a documented capability. This module is the shared Product/Item Master every other module builds on, following the same "extend, don't duplicate" discipline already enforced for Customer, Invoice, and Employee — Sales, Purchasing, Warehouse, POS, Website, Manufacturing, and Telecom all reference one Product record rather than each maintaining its own.
+
+- **Product/Item entity:** SKU, name/description (translation keys by default), base unit of measure, category/hierarchy, product type (stockable, service, bundle/kit, digital), and lifecycle status (draft, active, discontinued) governing where a product is sellable or purchasable. Default revenue/COGS/inventory GL accounts and tax treatment are set at the category level and inherited down, tying into Accounting's chart of accounts and tax engine rather than being re-entered per product.
+- **Variants and attributes:** a parent template product declares an attribute set (size, color, configuration options); variant SKUs are generated from the combination, using the same Entity Definition inheritance/extension mechanism used elsewhere in the platform — a variant extends its parent rather than being hand-entered as an unrelated product.
+- **Bundles and kits:** a sellable or purchasable product composed of other products, with a fixed or configurable component list — the shared foundation for BOM-style and service-bundle/CPQ use cases, rather than each vertical inventing its own bundle concept independently.
+- **Multi-UOM conversion:** product-specific conversion factors (sell by the case, stock by the each, purchase by the pallet) are defined once on the Product and referenced consistently by Sales order lines, Purchasing PO lines, and Warehouse's stock ledger, rather than each module doing its own unit math. The global UOM registry stays in the Warehouse app (as it predated this module); Product Catalogue references UOMs via UUID soft-link.
+- **Barcode/SKU management:** one or more barcodes per product/UOM combination, feeding the existing barcode-scanning capability directly — no separate barcode registry per module.
+- **Pricing foundation:** base price and standard cost live on the Product; PriceList (with tiered/volume ProductPrice rows) also lives here (moved from the Sales app, which now soft-links to PriceList by UUID). Sales' customer-specific and promotional pricing layers on top of this base.
+- **Catalog publishing and media:** per-channel visibility flags control whether a product is exposed via Website/e-commerce, POS, the customer mobile app, or staff-only internal use; product images/documents reuse the platform's existing CDN-friendly media delivery.
+- **Category-driven defaults:** the category hierarchy drives per-item-category GL account assignment and valuation method selection in Warehouse — this module is where "item category" is defined as a first-class entity with default GL account and tax fields, not assumed.
+- **Relationship to warehouse.Item:** `warehouse.Item` is the stock-behaviour extension of `product_catalogue.Product`. It adds stock-specific fields (`is_stock_item`, `has_serial_no`, `has_batch`, `valuation_method`, shelf-life, expiry tracking) and soft-links back via `item.product_id` UUID. All existing FKs from Sales, POS, and Manufacturing to `warehouse.Item` remain — those apps need the stock-specific model for fulfilment operations — but the canonical product identity and pricing live in product_catalogue.
+
+This module has no genuinely novel capability of its own — it is foundational shared master data at the same tier as Customer or Employee — but it belongs in Core Module Design precisely because Sales, Purchasing, Warehouse, and Website all silently depended on it existing.
+
 ---
 
 ## 7. Industry Modules (as Apps)
@@ -388,6 +441,28 @@ Like Microfinance (§7.1), Legal Services needs a few genuinely new platform cap
 - **Time & billing:** billable/non-billable time capture reuses Project Management's timesheet entity (§6.6), extended with fee arrangements (hourly, flat-fee, contingency, capped/blended rates) and LEDES e-billing export — a standardized electronic-invoice format many corporate clients require, conceptually parallel to the PEPPOL e-invoicing format already supported in Accounting (§6.1).
 - **Document assembly & management:** template-driven document generation built on the metadata engine (§5), with version control and e-signature integration reusing the e-signature hook already defined for CRM quoting (§6.3).
 - **Client portal:** secure document sharing and matter-status visibility, reusing the Customer permission scope and customer-facing API already built for other verticals (§10) rather than a bespoke portal.
+
+### 7.9 Government — capabilities beyond simple extension
+
+Originally treated as light extensions (tendering off Purchasing, budget-vs-actual off Accounting, citizen portal off Website), the Government App requires genuine new platform capability when benchmarked against leading public-sector platforms (Tyler Technologies, OpenGov, Accela) and the OCDS standard.
+
+**Concrete deployment target:** Metropolitan/Municipal/District Assemblies (MMDAs) in Ghana under the Local Governance Act 2016, Act 936. Every capability is designed to be generically applicable to other local-government/municipal contexts; Ghana-specific details (property rate under Act 936, MTN MoMo/AirtelTigo/Vodafone Cash as dominant payment rails, Internally Generated Funds / IGF classification) are the first instantiation, not hard constraints.
+
+**New capabilities beyond what Purchasing/Accounting/Website already provide:**
+
+- **Property/parcel register with revenue billing:** a property rate is a recurring jurisdiction-set levy against a rateable value held on file — not a sale, not an invoice in the commercial sense. The Property model carries `geopoint`/`geofence` fields (validated against the Assembly's ward boundary on registration), owner/occupier records, rateable value (externally assessed), and the Assembly's current rate impost (a percentage or fixed amount per valuation unit, set annually without developer involvement). An annual bill-run creates one `GovernmentRevenueBill` per property — the payable document — and the demand notice is generated from it. Non-payment follows: grace-period → dunning → legal escalation, with `bill_status` reflecting real payment state at all times.
+- **Multi-revenue-type billing through a single Payments Layer:** property rates, permit/license fees, market tolls and local levies, and one-off service/certificate fees are all modeled as `GovernmentRevenueBill` records with a `revenue_type` classification. Every payable document routes through `core/payments_gateway/` — the shared Payment Gateway abstraction (§11) — rather than the Government App inventing parallel payment logic. Revenue-type classification is queryable at the payment level so "total property rate collected this year" and "total permit fees collected this year" are distinct, correct figures.
+- **Mobile money as first-class collection channel:** MTN Mobile Money, AirtelTigo Money, and Vodafone Cash are the dominant payment rails for the target deployment. The core Payment Gateway's `MobileMoneyDriver` abstraction handles the provider-specific API differences; Government configures which providers are active rather than hard-coding them. A mobile money webhook confirmation posts the payment, marks the bill paid, and generates a receipt — no manual bank reconciliation required.
+- **Cash/teller collection with receipting:** field revenue collectors and Assembly cashiers record cash or bank-teller payments through the `CashTellerDriver`, reconciled at end-of-day the same way as any till/teller flow. Every payment — regardless of channel — generates a numbered receipt referencing payer, payable document, amount, and collector/channel.
+- **Idempotent webhook processing:** a retried mobile money confirmation must never double-post revenue. The Payment Gateway layer enforces idempotency (provider-specific transaction IDs as idempotency keys) for all inbound webhook payments.
+- **Offline field collection:** revenue collectors working door-to-door or at markets operate with unreliable connectivity. The offline-first capture pattern (local queue, sync on reconnect — §7.2 POS and §10.6 customer app) applies here: a collector records a cash payment or triggers a mobile money request on-device; it syncs once connectivity returns.
+- **Permitting, licensing & code enforcement:** dedicated case-type workflow — application intake, fee calculation by permit/license type, plan review/routing across departments, inspection scheduling, pass/fail/re-inspection disposition. Field inspections reuse offline-first capture. Permit fees are payable via the same Payment Gateway as property rates.
+- **GASB-style fund accounting with budgetary control:** appropriations function as a hard spending ceiling per fund/department/object code; encumbrance accounting reserves budget when a purchase order is issued (not just at payment). A transaction that would exceed the appropriation is blocked, not merely flagged. `BudgetaryControl` entries model the pre-encumbrance → encumbrance → expenditure lifecycle. The GASB framing is illustrative of the mechanism — the same budgetary-control model applies to any jurisdiction that controls spending by fund/department rather than just by GL account balance.
+- **Grants management (grantor and grantee):** as grantor: sub-grant/award issuance, formula and discretionary funding rules, pass-through compliance monitoring; as grantee: drawdown/reimbursement claims against awarded grants and the compliance reporting those awards require.
+- **311 / citizen case management and FOIA request management:** service-request intake across web, phone, and mobile; department routing; SLA/response-time tracking; resolution visible to requester. FOIA: intake, redaction-and-review routing, statutory response-deadline tracking with mandatory reminder escalation.
+- **OCDS publication:** procurement data (tender, award, contract, spend) published in Open Contracting Data Standard format for public transparency.
+- **Public infrastructure asset management:** roads, water/sewer, and other public assets extend Asset Management with GASB 34-style condition-assessment fields and infrastructure-specific depreciation reporting.
+- **IGF reporting:** a revenue dashboard classifying collections by source (property rate, permit fees, market tolls, service charges, grants) for Internally Generated Funds reporting — a statutory requirement for Assemblies.
 
 ---
 

@@ -17,11 +17,15 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     # core — auth must come first (AUTH_USER_MODEL)
     "core.auth.apps.OdumAuthConfig",
+    # core — shared payments gateway (before any app that processes payments)
+    "core.payments_gateway.apps.PaymentsGatewayConfig",
     # standard django admin (after custom user model)
     "django.contrib.admin",
     "django.contrib.sessions",
     # core — platform
     "core.audit.apps.OdumAuditConfig",
+    # Product Catalogue — must come before all transactional apps that soft-link to it
+    "apps.product_catalogue.apps.ProductCatalogueConfig",
     # Phase 1 business apps — must be before MetadataEngineConfig so their
     # entity_dir is discovered during MetadataEngineConfig.ready()
     "apps.crm.apps.CRMConfig",
@@ -31,6 +35,7 @@ INSTALLED_APPS = [
     "apps.purchasing.apps.PurchasingConfig",
     "apps.sales.apps.SalesConfig",
     # Phase 2 business apps
+    "apps.expense.apps.ExpenseConfig",
     "apps.payroll.apps.PayrollConfig",
     "apps.project.apps.ProjectConfig",
     "apps.asset_management.apps.AssetManagementConfig",
@@ -49,6 +54,8 @@ INSTALLED_APPS = [
     "apps.legal_services.apps.LegalServicesConfig",
     # core — document numbering
     "core.numbering.apps.NumberingConfig",
+    # core — AI agent layer (ADR-0001)
+    "core.ai_agent.apps.AIAgentConfig",
     # metadata engine scans entity dirs from apps above
     "core.metadata_engine.apps.MetadataEngineConfig",
     "core.platform_api.apps.PlatformAPIConfig",
@@ -172,3 +179,13 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # --- Odum ERP Suite-specific ---
 ODUM_ENTITY_SCAN_DIRS: list[str] = []  # populated by each App's AppConfig
+
+# --- AI Agent layer (ADR-0001) ---
+ODUM_AI_AGENT: dict = {
+    "enabled": False,               # disabled by default; set True when Ollama is running
+    "backend": "ollama",            # "ollama" | "null"
+    "ollama_base_url": "http://localhost:11434",
+    "ollama_model": "llama3.1",
+    "request_timeout": 60,
+    "handoff_webhook_url": "",      # optional n8n/webhook URL for handoff notifications
+}

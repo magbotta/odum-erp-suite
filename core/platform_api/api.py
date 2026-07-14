@@ -19,6 +19,9 @@ api = NinjaAPI(
 from core.auth.api import router as auth_router  # noqa: E402
 api.add_router("/auth", auth_router)
 
+from apps.product_catalogue.api import router as product_catalogue_router  # noqa: E402
+api.add_router("/catalogue", product_catalogue_router)
+
 # --- Phase 1 business app action routers ---
 from apps.accounting.api import router as accounting_router  # noqa: E402
 from apps.crm.api import router as crm_router  # noqa: E402
@@ -26,8 +29,12 @@ from apps.hrm.api import router as hrm_router  # noqa: E402
 from apps.warehouse.api import router as warehouse_router  # noqa: E402
 from apps.purchasing.api import router as purchasing_router  # noqa: E402
 from apps.sales.api import router as sales_router  # noqa: E402
+from apps.expense.api import router as expense_router  # noqa: E402
+from apps.payroll.api import router as payroll_router  # noqa: E402
 from apps.manufacturing.api import router as manufacturing_router  # noqa: E402
 from apps.pos.api import router as pos_router  # noqa: E402
+from apps.project.api import router as project_router  # noqa: E402
+from apps.asset_management.api import router as asset_router  # noqa: E402
 
 api.add_router("/accounting", accounting_router)
 api.add_router("/crm", crm_router)
@@ -35,8 +42,12 @@ api.add_router("/hrm", hrm_router)
 api.add_router("/warehouse", warehouse_router)
 api.add_router("/purchasing", purchasing_router)
 api.add_router("/sales", sales_router)
+api.add_router("/expense", expense_router)
+api.add_router("/payroll", payroll_router)
 api.add_router("/manufacturing", manufacturing_router)
 api.add_router("/pos", pos_router)
+api.add_router("/project", project_router)
+api.add_router("/assets", asset_router)
 
 # --- Phase 4 industry app action routers ---
 from apps.education_sis.api import router as education_sis_router  # noqa: E402
@@ -60,6 +71,10 @@ api.add_router("/legal", legal_services_router)
 
 from core.platform_api.meta import meta_router  # noqa: E402
 api.add_router("/meta", meta_router)
+
+# --- AI Agent layer (ADR-0001) ---
+from core.ai_agent.api import router as ai_agent_router  # noqa: E402
+api.add_router("/agents", ai_agent_router)
 
 
 # --- Global error handlers ---
