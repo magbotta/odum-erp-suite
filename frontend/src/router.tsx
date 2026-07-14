@@ -4,6 +4,7 @@ import LoginPage from './auth/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import EntityPage from './pages/EntityPage';
 import ProfilePage from './pages/ProfilePage';
+import AgentHandoffInboxPage from './pages/AgentHandoffInboxPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 export const router = createBrowserRouter([
@@ -19,6 +20,10 @@ export const router = createBrowserRouter([
       {
         path: 'profile',
         element: <ProfilePage />,
+      },
+      {
+        path: 'agents/handoffs',
+        element: <AgentHandoffInboxPage />,
       },
       {
         path: 'entities/:app/:entity',

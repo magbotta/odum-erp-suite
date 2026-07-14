@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useEntities } from '../meta/useEntities';
+import { useHandoffs } from '../api/agentHandoffs';
 import {
   DollarSign, Users, UserCheck, CreditCard, Kanban,
   ShoppingCart, TrendingUp, Package, Building2, Globe,
   Factory, Receipt, GraduationCap, Heart, Leaf,
   HeartHandshake, Radio, Landmark, Coins, Scale,
-  LayoutDashboard, ChevronDown, ChevronRight,
+  LayoutDashboard, ChevronDown, ChevronRight, Bot,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -74,6 +75,8 @@ function AppSection({ appKey, entities }: { appKey: string; entities: { entity: 
 
 export default function Sidebar() {
   const { data: entities = [] } = useEntities();
+  const { data: pendingHandoffs = [] } = useHandoffs('pending');
+  const actionableHandoffCount = pendingHandoffs.filter(h => h.trigger_reason !== 'review_queue').length;
 
   const byApp = entities.reduce<Record<string, typeof entities>>((acc, e) => {
     if (!acc[e.app]) acc[e.app] = [];
@@ -110,6 +113,25 @@ export default function Sidebar() {
         >
           <LayoutDashboard size={15} />
           Dashboard
+        </NavLink>
+
+        <NavLink
+          to="/agents/handoffs"
+          className={({ isActive }) =>
+            `flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition ${
+              isActive
+                ? 'bg-odum-600 text-white'
+                : 'text-slate-300 hover:text-white hover:bg-slate-700'
+            }`
+          }
+        >
+          <Bot size={15} />
+          <span className="flex-1">Agent Handoffs</span>
+          {actionableHandoffCount > 0 && (
+            <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-red-600 text-white text-[10px] font-semibold">
+              {actionableHandoffCount}
+            </span>
+          )}
         </NavLink>
 
         {/* Core apps */}
