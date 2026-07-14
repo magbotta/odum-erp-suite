@@ -1,0 +1,16 @@
+entity: StatutoryPack
+app: payroll
+fields:
+  - {name: country_code, type: string, required: true, label: "Country Code (ISO)"}
+  - {name: country_name, type: string, required: true}
+  - {name: name, type: string, required: true}
+  - {name: effective_from, type: date, required: true}
+  - {name: effective_to, type: date}
+  - {name: currency, type: string, default: USD}
+  - {name: is_active, type: boolean, default: true}
+  - {name: description, type: text}
+
+permissions:
+  - {role: HRManager, read: true, write: true}
+  - {role: FinanceManager, read: true, write: true}
+  - {role: Accountant, read: true}

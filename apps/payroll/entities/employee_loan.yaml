@@ -1,0 +1,32 @@
+entity: EmployeeLoan
+app: payroll
+fields:
+  - {name: loan_number, type: string, label: "Loan #", read_only: true}
+  - {name: employee, type: link, target: Employee, required: true}
+  - {name: loan_type, type: select, options: [advance, loan], default: loan}
+  - {name: principal_amount, type: currency, required: true}
+  - {name: interest_rate, type: float, default: 0, label: "Annual Interest Rate %"}
+  - {name: repayment_periods, type: integer, required: true, label: "Repayment Periods (months)"}
+  - {name: monthly_installment, type: currency, read_only: true}
+  - {name: total_repayable, type: currency, read_only: true}
+  - {name: outstanding_balance, type: currency, read_only: true}
+  - {name: currency, type: string, default: USD}
+  - {name: disbursement_date, type: date}
+  - {name: status, type: select, options: [draft, approved, disbursed, active, settled, cancelled], default: draft}
+  - {name: purpose, type: string}
+  - {name: notes, type: text}
+
+permissions:
+  - {role: Employee, read: true, write: true}
+  - {role: HRManager, read: true, write: true, approve: true}
+  - {role: FinanceManager, read: true, approve: true}
+
+workflow:
+  states: [draft, approved, disbursed, active, settled, cancelled]
+  transitions:
+    - {from: draft, to: approved, action: approve_loan}
+    - {from: approved, to: disbursed, action: disburse_loan}
+    - {from: disbursed, to: active, action: start_recovery}
+    - {from: active, to: settled, action: settle_loan}
+    - {from: draft, to: cancelled, action: cancel_loan}
+    - {from: approved, to: cancelled, action: cancel_loan}
