@@ -1,0 +1,30 @@
+entity: TravelRequest
+app: expense
+fields:
+  - {name: request_number, type: string, label: "Request #", read_only: true}
+  - {name: employee_id, type: string, label: "Employee ID", required: true}
+  - {name: employee_name, type: string, label: "Employee Name", required: true}
+  - {name: purpose, type: string, required: true}
+  - {name: destination, type: string, required: true}
+  - {name: from_date, type: date, required: true}
+  - {name: to_date, type: date, required: true}
+  - {name: estimated_cost, type: currency, default: 0}
+  - {name: currency, type: string, default: USD}
+  - {name: status, type: select, options: [draft, submitted, approved, rejected, cancelled], default: draft}
+  - {name: booking_status, type: select, options: [not_booked, partially_booked, booked], default: not_booked, read_only: true}
+  - {name: notes, type: text}
+  - {name: itinerary, type: table, target: TravelItinerary}
+
+permissions:
+  - {role: Employee, read: true, write: true, submit: true}
+  - {role: FinanceManager, read: true, approve: true, cancel: true}
+  - {role: Manager, read: true, approve: true}
+
+workflow:
+  states: [draft, submitted, approved, rejected, cancelled]
+  transitions:
+    - {from: draft, to: submitted, action: submit_travel_request}
+    - {from: submitted, to: approved, action: approve_travel_request}
+    - {from: submitted, to: rejected, action: reject_travel_request}
+    - {from: draft, to: cancelled, action: cancel_travel_request}
+    - {from: submitted, to: cancelled, action: cancel_travel_request}

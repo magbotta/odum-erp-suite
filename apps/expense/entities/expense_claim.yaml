@@ -1,0 +1,36 @@
+entity: ExpenseClaim
+app: expense
+fields:
+  - {name: claim_number, type: string, label: "Claim #", read_only: true}
+  - {name: employee_id, type: string, label: "Employee ID", required: true}
+  - {name: employee_name, type: string, label: "Employee Name", required: true}
+  - {name: from_date, type: date, label: "From", required: true}
+  - {name: to_date, type: date, label: "To", required: true}
+  - {name: purpose, type: string, label: "Purpose"}
+  - {name: currency, type: string, default: USD}
+  - {name: total_claimed_amount, type: currency, read_only: true}
+  - {name: total_sanctioned_amount, type: currency, read_only: true}
+  - {name: has_policy_violations, type: boolean, read_only: true}
+  - {name: status, type: select, options: [draft, submitted, approved, rejected, reimbursed, cancelled], default: draft}
+  - {name: reimbursement_method, type: select, options: [ap_payment, payroll], default: ap_payment}
+  - {name: reimbursed_at, type: date, read_only: true}
+  - {name: payment_reference, type: string, read_only: true}
+  - {name: cost_center_id, type: string, label: "Cost Center ID"}
+  - {name: project_id, type: string, label: "Project ID"}
+  - {name: notes, type: text}
+  - {name: lines, type: table, target: ExpenseClaimLine}
+
+permissions:
+  - {role: Employee, read: true, write: true, submit: true}
+  - {role: FinanceManager, read: true, write: true, submit: true, approve: true, cancel: true}
+  - {role: Accountant, read: true, approve: true}
+
+workflow:
+  states: [draft, submitted, approved, rejected, reimbursed, cancelled]
+  transitions:
+    - {from: draft, to: submitted, action: submit_claim}
+    - {from: submitted, to: approved, action: approve_claim}
+    - {from: submitted, to: rejected, action: reject_claim}
+    - {from: approved, to: reimbursed, action: reimburse_claim}
+    - {from: draft, to: cancelled, action: cancel_claim}
+    - {from: submitted, to: cancelled, action: cancel_claim}

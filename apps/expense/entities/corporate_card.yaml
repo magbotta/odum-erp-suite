@@ -1,0 +1,16 @@
+entity: CorporateCard
+app: expense
+fields:
+  - {name: employee_id, type: string, label: "Employee ID", required: true}
+  - {name: employee_name, type: string, label: "Employee Name", required: true}
+  - {name: card_number_last4, type: string, label: "Last 4 Digits", required: true}
+  - {name: card_network, type: select, options: [visa, mastercard, amex, other], default: visa}
+  - {name: card_type, type: select, options: [corporate, purchase, virtual], default: corporate}
+  - {name: credit_limit, type: currency, default: 0}
+  - {name: currency, type: string, default: USD}
+  - {name: is_active, type: boolean, default: true}
+
+permissions:
+  - {role: FinanceManager, read: true, write: true}
+  - {role: Accountant, read: true}
+  - {role: Employee, read: true}
