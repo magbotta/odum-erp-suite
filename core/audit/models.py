@@ -43,6 +43,16 @@ class AuditLog(models.Model):
 
     timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
 
+    # AI-agent traceability — set when origin == AI
+    agent_run_id = models.UUIDField(
+        null=True, blank=True, db_index=True,
+        help_text="AgentRun.id that caused this write; null for non-agent origins",
+    )
+    agent_slug = models.CharField(
+        max_length=50, blank=True,
+        help_text="AgentDefinition.slug for AI-originated writes",
+    )
+
     class Meta:
         app_label = "odum_audit"
         db_table = "odum_audit_log"
