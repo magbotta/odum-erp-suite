@@ -1,0 +1,30 @@
+entity: PropertyParcel
+app: government
+fields:
+  - {name: parcel_number, type: string, required: true}
+  - {name: block_number, type: string}
+  - {name: plot_number, type: string}
+  - {name: street_address, type: text, required: true}
+  - {name: ward, type: string, required: true}
+  - {name: ward_id, type: string}
+  - {name: geopoint, type: text}
+  - {name: geofence, type: text}
+  - {name: property_use, type: select, options: [residential, commercial, industrial, agricultural, mixed_use, government, vacant], default: residential}
+  - {name: total_area_sqm, type: float}
+  - {name: structure_area_sqm, type: float}
+  - {name: valuation_basis, type: select, options: [annual_value, capital_value, replacement_value, area_based], default: annual_value}
+  - {name: rateable_value, type: currency, default: 0}
+  - {name: last_valuation_date, type: date}
+  - {name: next_valuation_due, type: date}
+  - {name: owner_name, type: string, required: true}
+  - {name: owner_phone, type: string}
+  - {name: owner_email, type: string}
+  - {name: owner_crm_id, type: string}
+  - {name: occupier_name, type: string}
+  - {name: occupier_phone, type: string}
+  - {name: rate_payer, type: select, options: [owner, occupier], default: owner}
+  - {name: is_active, type: boolean, default: true}
+  - {name: exemption_reason, type: string}
+permissions:
+  - {role: GovernmentOfficer, read: true, write: true}
+  - {role: Viewer, read: true, write: false}

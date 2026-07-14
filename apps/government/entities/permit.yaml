@@ -1,0 +1,36 @@
+entity: Permit
+app: government
+label: Permit
+plural: Permits
+fields:
+  - {name: permit_number, type: string, label: "Permit Number"}
+  - {name: permit_type, type: string, label: "Permit Type", required: true}
+  - {name: applicant_name, type: string, label: "Applicant Name", required: true}
+  - {name: applicant_email, type: email, label: "Applicant Email"}
+  - {name: applicant_phone, type: phone, label: "Applicant Phone"}
+  - {name: property_address, type: text, label: "Property Address"}
+  - {name: description, type: text, label: "Description"}
+  - {name: status, type: select, options: [draft, submitted, under_review, approved, issued, expired, revoked, rejected]}
+  - {name: application_date, type: date, label: "Application Date"}
+  - {name: review_deadline, type: date, label: "Review Deadline"}
+  - {name: issue_date, type: date, label: "Issue Date"}
+  - {name: expiry_date, type: date, label: "Expiry Date"}
+  - {name: fee_amount, type: currency, label: "Permit Fee"}
+  - {name: fee_paid, type: boolean, label: "Fee Paid"}
+  - {name: inspection_required, type: boolean, label: "Inspection Required"}
+  - {name: inspection_passed, type: boolean, label: "Inspection Passed"}
+  - {name: conditions, type: text, label: "Conditions"}
+  - {name: rejection_reason, type: text, label: "Rejection Reason"}
+workflow:
+  states: [draft, submitted, under_review, approved, issued, expired, revoked, rejected]
+  transitions:
+    - {from: draft, to: submitted, action: submit_permit}
+    - {from: submitted, to: under_review, action: start_review}
+    - {from: under_review, to: approved, action: approve_permit}
+    - {from: approved, to: issued, action: issue_permit}
+    - {from: issued, to: revoked, action: revoke_permit}
+    - {from: submitted, to: rejected, action: reject_permit}
+    - {from: under_review, to: rejected, action: reject_permit}
+permissions:
+  - {role: PermitOfficer, read: true, write: true, submit: true}
+  - {role: Citizen, read: true, write: false}

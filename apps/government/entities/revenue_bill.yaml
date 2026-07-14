@@ -1,0 +1,37 @@
+entity: GovernmentRevenueBill
+app: government
+fields:
+  - {name: bill_number, type: string}
+  - {name: bill_type, type: select, options: [property_rate, permit_fee, market_toll, service_charge, fines_penalties, other], required: true}
+  - {name: fiscal_year, type: integer, required: true}
+  - {name: payer_name, type: string, required: true}
+  - {name: payer_phone, type: string}
+  - {name: payer_email, type: string}
+  - {name: parcel_id, type: string}
+  - {name: permit_id, type: string}
+  - {name: levy_id, type: string}
+  - {name: payable_amount, type: currency, required: true}
+  - {name: paid_amount, type: currency, default: 0}
+  - {name: penalty_amount, type: currency, default: 0}
+  - {name: currency, type: string, default: GHS}
+  - {name: bill_date, type: date}
+  - {name: due_date, type: date, required: true}
+  - {name: grace_period_end, type: date}
+  - {name: overdue_since, type: date}
+  - {name: bill_status, type: select, options: [unpaid, partially_paid, paid, overdue, escalated, cancelled, written_off], default: unpaid}
+  - {name: dunning_count, type: integer, default: 0}
+  - {name: description, type: text}
+workflow:
+  states: [unpaid, partially_paid, paid, overdue, escalated, cancelled, written_off]
+  transitions:
+    - {from: unpaid, to: partially_paid, action: record_partial_payment}
+    - {from: unpaid, to: paid, action: record_full_payment}
+    - {from: partially_paid, to: paid, action: record_full_payment}
+    - {from: unpaid, to: overdue, action: mark_overdue}
+    - {from: overdue, to: escalated, action: escalate}
+    - {from: overdue, to: paid, action: record_full_payment}
+    - {from: unpaid, to: cancelled, action: cancel}
+permissions:
+  - {role: GovernmentOfficer, read: true, write: true}
+  - {role: RevenueCollector, read: true, write: false}
+  - {role: Viewer, read: true, write: false}

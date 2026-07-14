@@ -1,0 +1,18 @@
+entity: GASBFund
+app: government
+label: GASB Fund
+plural: GASB Funds
+fields:
+  - {name: fund_number, type: string, label: "Fund Number", required: true}
+  - {name: name, type: string, label: "Fund Name", required: true}
+  - {name: fund_type, type: select, label: "Fund Type", options: [general, special_revenue, debt_service, capital_projects, permanent, enterprise, internal_service], required: true}
+  - {name: fiscal_year, type: integer, label: "Fiscal Year", required: true}
+  - {name: appropriated_budget, type: currency, label: "Appropriated Budget"}
+  - {name: encumbered_amount, type: currency, label: "Encumbered Amount"}
+  - {name: expended_amount, type: currency, label: "Expended Amount"}
+  - {name: available_balance, type: currency, label: "Available Balance"}
+  - {name: description, type: text, label: "Description"}
+  - {name: is_active, type: boolean, label: "Active"}
+permissions:
+  - {role: GovernmentFinance, read: true, write: true}
+  - {role: Auditor, read: true, write: false}

@@ -1,0 +1,35 @@
+entity: GrantApplication
+app: government
+label: Grant Application
+plural: Grant Applications
+fields:
+  - {name: grant_number, type: string, label: "Grant Number"}
+  - {name: title, type: string, label: "Title", required: true}
+  - {name: description, type: text, label: "Description"}
+  - {name: grant_type, type: select, label: "Grant Type", options: [issued, received], required: true}
+  - {name: status, type: select, options: [draft, submitted, under_review, approved, rejected, active, closed]}
+  - {name: counterpart_name, type: string, label: "Grantor / Grantee Name"}
+  - {name: counterpart_contact, type: email, label: "Counterpart Email"}
+  - {name: requested_amount, type: currency, label: "Requested Amount"}
+  - {name: approved_amount, type: currency, label: "Approved Amount"}
+  - {name: disbursed_amount, type: currency, label: "Disbursed Amount"}
+  - {name: currency, type: string, label: "Currency"}
+  - {name: application_date, type: date, label: "Application Date"}
+  - {name: award_date, type: date, label: "Award Date"}
+  - {name: start_date, type: date, label: "Grant Start Date"}
+  - {name: end_date, type: date, label: "Grant End Date"}
+  - {name: reporting_requirements, type: text, label: "Reporting Requirements"}
+  - {name: rejection_reason, type: text, label: "Rejection Reason"}
+  - {name: program_officer_name, type: string, label: "Program Officer"}
+workflow:
+  states: [draft, submitted, under_review, approved, rejected, active, closed]
+  transitions:
+    - {from: draft, to: submitted, action: submit_grant}
+    - {from: submitted, to: under_review, action: start_review}
+    - {from: under_review, to: approved, action: approve_grant}
+    - {from: under_review, to: rejected, action: reject_grant}
+    - {from: approved, to: active, action: activate_grant}
+    - {from: active, to: closed, action: close_grant}
+permissions:
+  - {role: GrantsManager, read: true, write: true, submit: true}
+  - {role: Finance, read: true, write: false}
